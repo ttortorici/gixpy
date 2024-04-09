@@ -33,7 +33,13 @@ for ii, file in enumerate(dir.glob("*.tif")):
 incident_angle = 0.3  # in degrees
 tilt_angle = 0  # in degrees
 
-transformed_data = gp.transform(data, incident_angle, poni.get_pixel1(), poni.get_poni1(), poni.get_poni2(), poni.get_dist(), tilt_angle)
+transformed_data = gp.transform(data,
+                                incident_angle,
+                                poni.get_pixel1(),
+                                poni.get_poni1(),
+                                poni.get_poni2(),
+                                poni.get_dist(),
+                                tilt_angle)
 ```
 
 # Assumed Geometry
