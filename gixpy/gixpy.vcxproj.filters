@@ -13,10 +13,20 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="python">
+      <UniqueIdentifier>{528958f1-8702-42d2-991e-b5c429b37aa3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gixpy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.py">
+      <Filter>python</Filter>
+    </None>
+    <None Include="setup.py" />
+    <None Include="pyproject.toml" />
   </ItemGroup>
 </Project>
