@@ -1,3 +1,40 @@
+# Install
+
+`pip install gixpy`
+
+# How to use
+
+Here's an example of N files from a directory and tranforming them all at once.
+
+``` python
+import gixpy as gp
+from pathlib import Path
+import numpy as np
+import fabio
+import pyFAI
+
+dir = Path("path/to/data")
+
+poni = pyFAI.load(dir / "name-of-poni-file.poni")
+
+rows, columns = poni.get_shape()
+
+# inspect data
+im_num = 0
+for _ in dir.glob("*.tif"):
+    im_num += 1
+
+# instantiate data
+data = np.empty((im_num, rows, columns))
+
+for ii, file in enumerate(dir.glob("*.tif")):
+    data[ii] = fabio.open(file).data 
+
+incident_angle = 0.3  # in degrees
+tilt_angle = 0  # in degrees
+
+transformed_data = gp.transform(data, incident_angle, poni.get_pixel1(), poni.get_poni1(), poni.get_poni2(), poni.get_dist(), tilt_angle)
+```
 
 # Assumed Geometry
 
