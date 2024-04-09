@@ -25,11 +25,16 @@ for _ in dir.glob("*.tif"):
     im_num += 1
 
 # instantiate data
-data = np.empty((im_num, rows, columns))
+data = np.empty((im_num + 1, rows, columns))
 
 for ii, file in enumerate(dir.glob("*.tif")):
     data[ii] = fabio.open(file).data 
 
+# make weights based on exposure time to track how many pixels get moved to each new location
+exposure_time = 1800  # in seconds
+data[-1] = np.ones((rows, columns)) * expsoure_time
+
+# set geometric parameters not saved in poni file
 incident_angle = 0.3  # in degrees
 tilt_angle = 0  # in degrees
 
@@ -40,6 +45,9 @@ transformed_data = gp.transform(data,
                                 poni.get_poni2(),
                                 poni.get_dist(),
                                 tilt_angle)
+
+transfromed_weights = transformed_data[-1]
+adjusted_data = transformed_data[:-1] * (exposure_time / transformed_weights)
 ```
 
 # Assumed Geometry
@@ -164,3 +172,7 @@ The $q$-vector can then be calculated with these angles using the equation relat
 ![Diagram](images/Fig4.png)
 
 The above plots show the amount of $q$ in each direction based on distance from the beam center on the detector. The lines are contour lines, with red signifying when the vector is 0 in this direction.
+
+# The Algorithm
+
+The algorithm calculates the $q_{xy}=\sqrt{q_x^2+q_y^2}$ and $q_z$ at every pixel based on the parameters given to the function. These are then used to calculate distances on the detector that would have corresponded to these $q$ values if the sample were a powder.
