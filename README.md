@@ -11,7 +11,7 @@ Currently, this calculation assumes the top-left pixel of the detector is the or
 
 ![Diagram](images/Fig1.png)
 
-The *forbidden wedge* transformation is due to the fact that, in the sample frame (where the $c$-axis of the crystal is the $z$-axis of the frame), the $q$-vector has $x^{(S)}$, $y^{(S)}$, and $z^{(S)}$ components unless the incident angle $\alpha_i$ is equal to the scattered angle (toward the $z$-axis) $\alpha_s$. The geometry is shown in \cref{fig:gi-geometry}a, which can be used to show that the incident and scattering wavevectors in the sample frame are
+The *forbidden wedge* transformation is due to the fact that, in the sample frame (where the $c$-axis of the crystal is the $z$-axis of the frame), the $q$-vector has $x^{(S)}$, $y^{(S)}$, and $z^{(S)}$ components unless the incident angle $\alpha_i$ is equal to the scattered angle (toward the $z$-axis) $\alpha_s$. The geometry is shown in (a) of the above figure, which can be used to show that the incident and scattering wavevectors in the sample frame are
 
 $$\begin{equation}
 \begin{split}
@@ -43,9 +43,7 @@ $$\begin{equation}
 
 Clearly, $q_y$ is zero when $\phi_s=0$, and therefore $q_x$ and $q_y$ are simultaneously zero when $\phi=0$ and $\cos\alpha_s=\cos\alpha_i$, so the only scattered wave with a $\mathbf{q}$ pointing only in the $z$-direction will be when $\phi_s = 0$ and $\alpha_s = \alpha_i$. Since this situation has equal incident and scattered angle, we can refer to it as the \emph{specular condition}.
 
-![Diagram](images/Fig2.png)
-
-A signal on the detector will be due to a scattered wave $\mathbf{k}_s$ hitting the detector, and this event will carry information about the corresponding $\mathbf{q}$. However, since the detector is perpendicular to the $\mathbf{k}_i$, it is easier to work in the lab frame (see \cref{fig:gi-geometry}b) to determine which pixel on the detector $\mathbf{k}_f$ hits. The lab frame is rotated with $R_y(-\alpha_i)$ from the sample frame, so $\mathbf{k}_s$ in the lab frame is
+A signal on the detector will be due to a scattered wave $\mathbf{k}_s$ hitting the detector, and this event will carry information about the corresponding $\mathbf{q}$. However, since the detector is perpendicular to the $\mathbf{k}_i$, it is easier to work in the lab frame (see (b) of the figure above) to determine which pixel on the detector $\mathbf{k}_f$ hits. The lab frame is rotated with $R_y(-\alpha_i)$ from the sample frame, so $\mathbf{k}_s$ in the lab frame is
 
 $$\begin{equation}
     \mathbf{k}_s = R_y(-\alpha_i)\frac{2\pi}{\lambda}
@@ -67,7 +65,9 @@ $$\begin{equation}
     \mathbf{k}_{s,\text{spec}} = \frac{4\pi}{\lambda}\sin{(2\alpha_i)}\hat{\mathbf{z}}^{(L)},
 \end{equation}$$
 
-\cref{fig:gi-geometry} shows how the angles $\alpha_i$, $\alpha_s$, and $\phi_s$ determine where a scattered wave will hit the detector. The location $\mathbf{r}$ will have the same direction as $\mathbf{k}_s$ (i.e. $\mathbf{\hat{k}}_s=\hat{\mathbf{r}}$); therefore
+![Diagram](images/Fig2.png)
+
+The above figure shows how the angles $\alpha_i$, $\alpha_s$, and $\phi_s$ determine where a scattered wave will hit the detector. The location $\mathbf{r}$ will have the same direction as $\mathbf{k}_s$ (i.e. $\mathbf{\hat{k}}_s=\hat{\mathbf{r}}$); therefore
 
 $$\begin{equation}
     \mathbf{r} = r
@@ -89,7 +89,9 @@ $$\begin{equation}
     r = \sqrt{d_{s\text{-}d}^2 + r_{y^{(L)}}^2 + r_{z^{(L)}}^2}.
 \end{equation}$$
 
-However, the detector's origin is the top-left pixel of the CCD array (see \cref{fig:det-lab}). This leads to one last transformation from the lab frame to the detector frame where
+![Diagram](images/Fig3.png)
+
+However, the detector's origin is the top-left pixel of the CCD array (see the figure above). This leads to one last transformation from the lab frame to the detector frame where
 
 $$\begin{equation}
 \begin{split}
@@ -114,8 +116,8 @@ $$\begin{equation}
 \end{split}
 \end{equation}$$
 
-![Diagram](images/Fig3.png)
-
-The $q$-vector can then be calculated with these angles using \cref{eq:q}. 
+The $q$-vector can then be calculated with these angles using the equation relating $q$ to the scattering angles. 
 
 ![Diagram](images/Fig4.png)
+
+The above plots show the amount of $q$ in each direction based on distance from the beam center on the detector. The lines are contour lines, with red signifying when the vector is 0 in this direction.
