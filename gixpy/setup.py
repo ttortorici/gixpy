@@ -12,8 +12,9 @@ gp_module = Extension("gixpy",
 
 setup(
     name='gixpy',
-    version="1.0",
+    version="1.3",
     description="Python package to quickly transform GIWAXS images using C",
+    long_description="Visit github.com/etortorici/gixpy for details",
     author_email='edward.tortorici@colorado.edu',
     license='GPL',
     ext_modules=[gp_module],

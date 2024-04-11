@@ -460,7 +460,7 @@ int exec_gixpy(PyObject *module) {
     PyModule_AddFunctions(module, gixpy_functions);
 
     PyModule_AddStringConstant(module, "__author__", "Teddy Tortorici");
-    PyModule_AddStringConstant(module, "__version__", "1.0.0");
+    PyModule_AddStringConstant(module, "__version__", "1.3");
     PyModule_AddIntConstant(module, "year", 2024);
 
     return 0; /* success */

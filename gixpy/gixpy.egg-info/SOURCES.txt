@@ -4,5 +4,4 @@ setup.py
 gixpy.egg-info/PKG-INFO
 gixpy.egg-info/SOURCES.txt
 gixpy.egg-info/dependency_links.txt
-gixpy.egg-info/requires.txt
 gixpy.egg-info/top_level.txt
