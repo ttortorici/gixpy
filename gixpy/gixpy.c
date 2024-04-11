@@ -48,6 +48,15 @@ static struct Shape {
     npy_intp cols;
 };
 
+static struct PixelInfo {
+    int64_t row;
+    int64_t col;
+    double weight_curr;
+    double weight_col_neighbor;
+    double weight_row_neighbor;
+    double weight_dia_neighbor;
+};
+
 static struct Geometry {
     double beam_center_x;
     double beam_center_y;
@@ -59,41 +68,113 @@ static struct Geometry {
 };
 
 static PyObject* transform(PyObject* self, PyObject* args) {
-    // PyObject* data_obj;
-    PyArrayObject* data_array_obj;
+    PyObject* input_data_obj;
+    PyArrayObject** data_array_obj_ptr; // pointer to pointers
     double incident_angle, pixel_size, beam_center_y, beam_center_x, det_dist, tilt_angle, to_pixel;
     
-    if (!PyArg_ParseTuple(args, "Odddddd", &data_array_obj, &incident_angle, &pixel_size,
+    if (!PyArg_ParseTuple(args, "Odddddd", &input_data_obj, &incident_angle, &pixel_size,
         &beam_center_y, &beam_center_x, &det_dist, &tilt_angle)) {
+        PyErr_SetString(PyExc_ValueError, "The inputs were not parsed.");
         return NULL;
     }
 
-    double* data_array = PyArray_DATA(data_array_obj);
-    int64_t ndim = PyArray_NDIM(data_array_obj);
-    size_t* data_shape = PyArray_SHAPE(data_array_obj);
+    int64_t im_num, rows, columns;
+    if (PyTuple_Check(input_data_obj) || PyList_Check(input_data_obj)) {
+        if (PyTuple_Check(input_data_obj)) { im_num = PyTuple_Size(input_data_obj); }
+        else { im_num = PyList_Size(input_data_obj); }
 
-    size_t im_num, rows, columns;
+        data_array_obj_ptr = malloc(im_num * sizeof(PyArrayObject*));
 
-    if (ndim == 2) {
+        if (PyTuple_Check(input_data_obj)) {
+            data_array_obj_ptr[0] = (PyArrayObject*)PyTuple_GetItem(input_data_obj, 0);
+        }
+        else {
+            data_array_obj_ptr[0] = (PyArrayObject*)PyList_GetItem(input_data_obj, 0);
+        }
+        
+        int64_t ndim = PyArray_NDIM(data_array_obj_ptr[0]);
+        size_t* data_shape = PyArray_SHAPE(data_array_obj_ptr[0]);
+        if (PyArray_TYPE(data_array_obj_ptr[0]) != NPY_DOUBLE) {
+            PyErr_SetString(PyExc_ValueError, "The first element of the data input list/tuple is not a NumPy Array and should be.");
+            free(data_array_obj_ptr);
+            return NULL;
+        }
+        if (ndim != 2) {
+            PyErr_SetString(PyExc_ValueError, "The first element of the data input list/tuple is not a 2D NumPy Array and should be.");
+            free(data_array_obj_ptr);
+            return NULL;
+        }
+        rows = data_shape[0];
+        columns = data_shape[1];
+        for (Py_ssize_t ii = 1; ii < im_num; ++ii) {
+            if (PyTuple_Check(input_data_obj)) {
+                data_array_obj_ptr[ii] = (PyArrayObject*)PyTuple_GetItem(input_data_obj, ii);
+            }
+            else {
+                data_array_obj_ptr[ii] = (PyArrayObject*)PyList_GetItem(input_data_obj, ii);
+            }
+            int64_t ndim = PyArray_NDIM(data_array_obj_ptr[ii]);
+            size_t* data_shape = PyArray_SHAPE(data_array_obj_ptr[ii]);
+            if (PyArray_TYPE(data_array_obj_ptr[ii]) != NPY_DOUBLE) {
+                PyErr_SetString(PyExc_ValueError, "Element %d was not dtype=np.float64 and should be.", ii);
+                free(data_array_obj_ptr);
+                return NULL;
+            }
+            if (ndim != 2) {
+                PyErr_SetString(PyExc_ValueError, "Element %d of the data input list/tuple is not a 2D NumPy Array and should be.", ii);
+                free(data_array_obj_ptr);
+                return NULL;
+            }
+            if (data_shape[0] != rows || data_shape[1] != columns) {
+                PyErr_SetString(PyExc_ValueError, "All input data in the list/tuple must be the same size.");
+                free(data_array_obj_ptr);
+                return NULL;
+            }
+            if (!PyArray_IS_C_CONTIGUOUS(data_array_obj_ptr[ii])) {
+                PyErr_SetString(PyExc_ValueError, "Element %d is not C-contiguous.", ii);
+                free(data_array_obj_ptr);
+                return NULL;
+            }
+        }
+    }
+    else if (PyArray_Check(input_data_obj)) {
         im_num = 1;
+        data_array_obj_ptr = malloc(sizeof(PyArrayObject*));
+        data_array_obj_ptr[0] = (PyArrayObject*)input_data_obj;
+        if (PyArray_TYPE(data_array_obj_ptr[0]) != NPY_DOUBLE) {
+            PyErr_SetString(PyExc_ValueError, "The data input must be a NumPy array of dtype=np.float64.");
+            free(data_array_obj_ptr);
+            return NULL;
+        }
+        if (!PyArray_IS_C_CONTIGUOUS(data_array_obj_ptr[0])) {
+            PyErr_SetString(PyExc_ValueError, "Input data is not C-contiguous.");
+            free(data_array_obj_ptr);
+            return NULL;
+        }
+        int64_t ndim = PyArray_NDIM(data_array_obj_ptr[0]);
+        size_t* data_shape = PyArray_SHAPE(data_array_obj_ptr[0]);
+        if (ndim != 2) {
+            PyErr_SetString(PyExc_ValueError, "Element %d of the data input tuple is not a 2D NumPy Array and should be.", 0);
+            free(data_array_obj_ptr);
+            return NULL;
+        }
         rows = data_shape[0];
         columns = data_shape[1];
     }
-    else if (ndim == 3) {
-        im_num = data_shape[0];
-        rows = data_shape[1];
-        columns = data_shape[2];
-    }
     else {
-        im_num = 0;
-        rows = 0;
-        columns = 0;
-        PyErr_SetString(PyExc_ValueError, "The data input must be a 2 or 3 dimensional array\n");
-        Py_DECREF(data_array_obj);
+        PyErr_SetString(PyExc_ValueError, "Input must be a NumPy array or a tuple of numpy arrays");
         return NULL;
     }
+    int64_t im_size = rows * columns;
+    
+    // Pointer to array of pointers which will point to numpy data
+    double** data_array_ptr = (double**)malloc(im_num * sizeof(double*));
 
-    PySys_WriteStdout("Loaded %d-D array of shape (%d, %d, %d).\n", ndim, im_num, rows, columns);
+    for (size_t ii = 0; ii < im_num; ++ii) {
+        data_array_ptr[ii] = PyArray_DATA(data_array_obj_ptr[ii]);
+    }
+
+    PySys_WriteStdout("Loaded %d images of shape (%d, %d).\n", im_num, rows, columns);
 
     to_pixel = 1. / pixel_size;
     
@@ -107,10 +188,11 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         .columns = columns
     };
 
-    double* r_arr = (double*)malloc((rows * columns) * sizeof(struct Point2D));
+    struct Point2D* r_arr = (struct Point2D*)malloc((im_size) * sizeof(struct Point2D));
     if (r_arr == NULL) {
         PyErr_SetString(PyExc_ValueError, "Failed to allocate memory for distances for transform.");
-        Py_DECREF(data_array_obj);
+        free(data_array_obj_ptr);
+        free(data_array_ptr);
         return NULL;
     }
 
@@ -118,99 +200,155 @@ static PyObject* transform(PyObject* self, PyObject* args) {
     struct Shape new_im_shape;
     if (!calc_r(r_arr, &geometry, &beam_center_t, &new_im_shape)) {
         PyErr_SetString(PyExc_ValueError, "Failed to calculate distances for transform\n");
-        Py_DECREF(data_array_obj);
-        free(data_array);
-        return NULL;
-    }
-    PySys_WriteStdout("Found new locations for pixels.\nOutput will be %d-D array of shape (%d, %d, %d).\n", ndim, im_num, new_im_shape.rows, new_im_shape.cols);
-
-    PyArrayObject* transformed_array_obj;
-    if (im_num == 1) {
-        npy_intp dim[2] = { new_im_shape.rows, new_im_shape.cols };
-        transformed_array_obj = PyArray_ZEROS(2, dim, NPY_DOUBLE, 0);
-    } else {
-        npy_intp dim[3] = { im_num, new_im_shape.rows, new_im_shape.cols };
-        transformed_array_obj = PyArray_ZEROS(3, dim, NPY_DOUBLE, 0);
-    }
-    if (transformed_array_obj == NULL) {
-        PyErr_Print("Failed to create internal arrays. Likely due to data input being incorrect shape.");
-        Py_DECREF(data_array_obj);
-        Py_DECREF(transformed_array_obj);
-        return NULL;
-    }
-        
-    double* transformed_data = PyArray_DATA(transformed_array_obj);
-
-    move_pixels(data_array, transformed_data, r_arr, &beam_center_t, &new_im_shape, im_num, rows, columns);
-
-    PyObject* return_tuple = PyTuple_New(2);
-    PyObject* beam_center_tuple = PyTuple_New(2);
-    if (return_tuple == NULL || beam_center_tuple == NULL) {
-        PyErr_SetString(PyExc_MemoryError, "Failed to create Python tuple to return values.");
-        Py_DECREF(data_array_obj);
-        Py_DECREF(transformed_array_obj);
+        free(data_array_obj_ptr);
+        free(data_array_ptr);
         free(r_arr);
         return NULL;
     }
-    PyTuple_SET_ITEM(beam_center_tuple, 0, PyFloat_FromDouble(beam_center_t.y));
-    PyTuple_SET_ITEM(beam_center_tuple, 1, PyFloat_FromDouble(beam_center_t.x));
-    PyTuple_SET_ITEM(return_tuple, 0, transformed_array_obj);
-    PyTuple_SET_ITEM(return_tuple, 1, beam_center_tuple);
+    PySys_WriteStdout("Found new locations for pixels.\nOutput images will have shape (%d, %d)\n", new_im_shape.rows, new_im_shape.cols);
 
-    Py_DECREF(data_array_obj);
+    struct PixelInfo* pixel_info = (struct PixelInfo*)malloc((im_size) * sizeof(struct PixelInfo));
+    if (pixel_info == NULL) {
+        PyErr_SetString(PyExc_ValueError, "Failed to allocate memory for pixel information.");
+        free(data_array_obj_ptr);
+        free(data_array_ptr);
+        free(r_arr);
+        return NULL;
+    }
+    
+    calc_pixel_info(r_arr, pixel_info, &beam_center_t, &new_im_shape, im_size);
+    //printf("calculated info\n");
+
+    //printf("(%d, %d)", pixel_info->row, pixel_info->col);
+
+    // create pointer to pointers to output arrays
+    PyArrayObject** transformed_array_obj_ptr;
+    double** transformed_data_ptr;
+
+    transformed_array_obj_ptr = (PyArrayObject**)malloc(im_num * sizeof(PyArrayObject*));
+    transformed_data_ptr = (double**)malloc(im_num * sizeof(double*));
+
+    npy_intp dim[2] = { new_im_shape.rows, new_im_shape.cols };
+    for (size_t ii = 0; ii < im_num; ++ii) {
+        //printf("%d\n", ii);
+        *transformed_array_obj_ptr = (PyArrayObject*)PyArray_ZEROS(2, dim, NPY_DOUBLE, 0);
+        if (*transformed_array_obj_ptr == NULL) {
+            PyErr_Print("Failed to create internal arrays. Likely due to data input being incorrect shape.");
+            for (size_t jj = 0; jj < ii; ++jj) {
+                Py_DECREF(*(--transformed_array_obj_ptr));
+                free(*(--transformed_data_ptr));
+            }
+            free(data_array_obj_ptr);
+            free(data_array_ptr);
+            free(r_arr);
+            free(pixel_info);
+            free(transformed_array_obj_ptr);
+            free(transformed_data_ptr);
+            return NULL;
+        }
+        *transformed_data_ptr = (double*)PyArray_DATA(*transformed_array_obj_ptr);
+        transformed_data_ptr++;
+        transformed_array_obj_ptr++;
+    }
+    // return pointer to pointers to start position
+    transformed_data_ptr -= im_num;
+    transformed_array_obj_ptr -= im_num;
+
+    move_pixels(data_array_ptr, transformed_data_ptr, pixel_info, &beam_center_t, &new_im_shape, im_num, im_size);
+
+    PyObject* return_array;
+    if (im_num == 1) {
+        return_array = (PyArrayObject*)transformed_array_obj_ptr[0];
+    }
+    else {
+        Py_ssize_t num_images = (Py_ssize_t)im_num;
+        PyObject* return_list = PyList_New(num_images);
+        for (Py_ssize_t ii = 0; ii < num_images; ++ii) {
+            PyList_SET_ITEM(return_list, ii, transformed_array_obj_ptr[ii]);
+        }
+        return_array = PyList_AsTuple(return_list);
+    }
+    
+    PyObject* beam_center_tuple = PyTuple_Pack(2, PyFloat_FromDouble(beam_center_t.y), PyFloat_FromDouble(beam_center_t.y));
+
     free(r_arr);
-    return return_tuple;    
+    free(pixel_info);
+    free(transformed_array_obj_ptr);
+    free(transformed_data_ptr);
+    free(data_array_obj_ptr);
+    free(data_array_ptr);
+    
+    return Py_BuildValue("OO", return_array, beam_center_tuple);
 }
 
-static int move_pixels(double* data_ii, double* data_t_ii, struct Point2D* r_ii,
-                        struct Point2D* beam_center_t, struct Shape* shape_t, size_t im_num, size_t rows, size_t columns) {
-    double x_deto, y_deto, x_floor, y_floor, x_r, y_r, x_rc, y_rc, data_at_px;
-    double current_pixel_weight, x_neighbor_weight, y_neighbor_weight, diag_neighbor_weight;
-    int64_t x_px, y_px, index_t_prev;
+static int move_pixels(double** data_ptr_ii, double** data_t_ptr_ii, struct PixelInfo* pixel_info,
+                        struct Point2D* beam_center_t, struct Shape* shape_t, int64_t im_num, int64_t im_size) {
+    double current_pixel_intensity;
+    int64_t index_t_prev;
     int64_t index_t_curr = 0;
-    int64_t px_num = rows * columns;
 
-    for (size_t rr = 0; rr < rows; ++rr) {
-        for (size_t cc = 0; cc < columns; ++cc) {
-            x_deto = beam_center_t->x - r_ii->x;
-            y_deto = beam_center_t->y - r_ii++->y;
-            x_floor = floor(x_deto);
-            y_floor = floor(y_deto);
-            x_px = x_floor;
-            y_px = y_floor;
-            x_r = x_deto - x_floor;
-            x_rc = 1. - x_r;
-            y_r = y_deto - y_floor;
-            y_rc = 1. - y_r;
-            current_pixel_weight = x_rc * y_rc;
-            x_neighbor_weight = x_r * y_rc;
-            y_neighbor_weight = x_rc * y_r;
-            diag_neighbor_weight = x_r * y_r;
-
+    for (int64_t im_index = 0; im_index < im_num; ++im_index) {
+        for (int64_t px_index = 0; px_index < im_size; ++px_index) {
+            //printf("%d\n", px_index);
+            // move pointer to new location
+            //printf("%p\n", *data_t_ptr_ii);
             index_t_prev = index_t_curr;
-            index_t_curr = y_px * shape_t->cols + x_px;
-            data_t_ii += index_t_curr - index_t_prev;       // move t pointer based on new pixel location
-            data_at_px = *data_ii++;                        // get data at current pixel and move pointer forward
-            if (data_at_px > 0.1) {
-                int64_t ii;
-                for (ii = 0; ii < im_num; ++ii) {
-                    *data_t_ii++ += data_at_px * current_pixel_weight;
-                    *data_t_ii += data_at_px * x_neighbor_weight;
-                    data_t_ii += shape_t->cols;
-                    *data_t_ii-- += data_at_px * diag_neighbor_weight;
-                    *data_t_ii += data_at_px * y_neighbor_weight;
-                    data_t_ii -= shape_t->cols;
-                    data_t_ii += px_num;
-                }
-                data_t_ii -= px_num * ii;
-            }
+            index_t_curr = pixel_info->row * shape_t->cols + pixel_info->col;
+            //printf("(%d, %d)\n", pixel_info->row, pixel_info->col);
+            //printf("%d\n", index_t_curr - index_t_prev);
+            *data_t_ptr_ii += index_t_curr - index_t_prev;
+            ////printf("%p\n", *data_t_ptr_ii);
+
+            current_pixel_intensity = **data_ptr_ii;
+            // move intensity at current pixel
+            **data_t_ptr_ii += current_pixel_intensity * pixel_info->weight_curr;
+            *data_t_ptr_ii = *data_t_ptr_ii + 1;                // move to column neighbor
+            
+            **data_t_ptr_ii += current_pixel_intensity * pixel_info->weight_col_neighbor;
+            *data_t_ptr_ii += shape_t->cols;    // move to diagonal neighbor
+
+            **data_t_ptr_ii += current_pixel_intensity * pixel_info->weight_dia_neighbor;
+            *data_t_ptr_ii -= 1;                // move to row neighbor
+
+            **data_t_ptr_ii += current_pixel_intensity * pixel_info->weight_row_neighbor;
+            *data_t_ptr_ii -= shape_t->cols;    // move back to current pixel
+
+            // move to next pixel in image
+            *data_ptr_ii += 1;
+            pixel_info++;
         }
+        pixel_info -= im_size;  // move back to start of image
+        data_ptr_ii++;          // move to next image
+    }
+    return 1;
+}
+
+static int calc_pixel_info(struct Point2D* r_ii, struct PixelInfo* pixel_info,
+                           struct Point2D* beam_center_t, struct Shape* new_im_shape, int64_t image_size) {
+    double x_deto, y_deto, x_floor, y_floor, x_r, x_rc, y_r, y_rc;
+    for (int64_t ii = 0; ii < image_size; ++ii) {
+        x_deto = beam_center_t->x - r_ii->x;    // shift origin to left of detector
+        y_deto = beam_center_t->y - r_ii++->y;  // shift origin to top of detector (and move pointer to next in array)
+        x_floor = floor(x_deto);
+        y_floor = floor(y_deto);
+        x_r = x_deto - x_floor;     // Determine how much the intensity spills over to the neighbor to the right
+        x_rc = 1. - x_r;            // Determine how much of the intensity stays at this pixel
+        y_r = y_deto - y_floor;     // Determine how much the intensity spills over to the neighbor below
+        y_rc = 1. - y_r;            // Determine how much of the intensity stays at this pixel
+        //if (ii == 0) { printf("(%.1f,%.1f) --- ", y_floor, x_floor); }
+        pixel_info->row = (int64_t)y_floor;  // This is the new row for pixel at (rr, cc)
+        pixel_info->col = (int64_t)x_floor;  // This is the new column for pixel at (rr, cc)
+        //if (ii == 0) { printf("(%d, %d)\n", pixel_info->row, pixel_info->col); }
+        pixel_info->weight_curr = x_rc * y_rc;          // fraction that stays
+        pixel_info->weight_col_neighbor = x_r * y_rc;   // fraction spills to the right
+        pixel_info->weight_row_neighbor = x_rc * y_r;   // fraction spills below
+        pixel_info++->weight_dia_neighbor = x_r * y_r;  // fraction spills diagonally to the right and below (and move pointer to next in array)
     }
     return 1;
 }
 
 static int calc_r(struct Point2D* r_ii, struct Geometry* geo, struct Point2D* new_beam_center, struct Shape* new_image_shape) {
-    struct Point2D* optr = r_ii;
+    //struct Point2D* optr = r_ii;
     double cos_incident, sin_incident;
 
     cos_incident = cos(geo->incident_angle);
