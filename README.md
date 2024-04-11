@@ -21,11 +21,11 @@ rows, columns = poni.get_shape()
 
 # inspect data
 im_num = 0
-for _ in dir.glob("*.tif"):
+for file in dir.glob("*.tif"):
     im_num += 1
 
-# instantiate data
-data = np.empty((im_num + 1, rows, columns))
+# instantiate list to put data in
+data = [None] * (im_num + 1)  # adding an extra space to put "weights"
 
 for ii, file in enumerate(dir.glob("*.tif")):
     data[ii] = fabio.open(file).data 
@@ -38,16 +38,18 @@ data[-1] = np.ones((rows, columns)) * expsoure_time
 incident_angle = 0.3  # in degrees
 tilt_angle = 0  # in degrees
 
-transformed_data = gp.transform(data,
-                                incident_angle,
-                                poni.get_pixel1(),
-                                poni.get_poni1(),
-                                poni.get_poni2(),
-                                poni.get_dist(),
-                                tilt_angle)
+transformed_data, new_beam_center = gp.transform(
+    data,
+    incident_angle,
+    poni.get_pixel1(),
+    poni.get_poni1(),
+    poni.get_poni2(),
+    poni.get_dist(),
+    tilt_angle
+)
 
 transfromed_weights = transformed_data[-1]
-adjusted_data = transformed_data[:-1] * (exposure_time / transformed_weights)
+adjusted_data = np.array(transformed_data[:-1]) * (exposure_time / transformed_weights)
 ```
 
 # Assumed Geometry
