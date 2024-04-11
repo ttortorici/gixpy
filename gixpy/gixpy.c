@@ -14,7 +14,7 @@ static double sign(double x) {
  * Implements an example function.
  */
 PyDoc_STRVAR(gixpy_transform_doc, 
-    "transform(image_data, incident_angle_deg, pixel_size_m, beam_center_y_m, beam_center_x_m, det_dist_m, tilt_angle_deg)\n\n"
+    "transform(image_data, incident_angle_deg, pixel_size_m, poni_y_m, poni_x_m, det_dist_m, tilt_angle_deg)\n\n"
     "Transform XRD images with forbidden wedge (move pixels to rotate recipricol space vectors into the detector plane). The resulting image will be a different shape to preserve pixel size and detector distance.\n\n"
     "Parameters:\n"
     "image_data : ndarray\n"
@@ -23,10 +23,10 @@ PyDoc_STRVAR(gixpy_transform_doc,
     "    Angle of incidence on the sample (in degrees).\n"
     "pixel_size_m : float\n"
     "    Size of a pixel (in meters).\n"
-    "beam_center_y_m : float\n"
-    "    Distance from the bottom of the detector to the beam center (in meters).\n"
-    "beam_center_x_m : float\n"
-    "    Distance from the left of the detector to the beam center (looking at the detector from the sample) (in meters).\n"
+    "poni_y_m : float\n"
+    "    Distance from the bottom of the detector to the PONI (in meters).\n"
+    "poni_x_m : float\n"
+    "    Distance from the left of the detector to the PONI (looking at the detector from the sample) (in meters).\n"
     "det_dist_m : float\n"
     "    Distance of the detector from the sample (in meters).\n"
     "tilt_angle_deg : float\n"
@@ -69,6 +69,8 @@ static struct Geometry {
 };
 
 static PyObject* transform(PyObject* self, PyObject* args) {
+    static char* input_names[] = { "image_data", "incident_angle_degrees", "pixel_size_m", "poni_y_m", "poni_x_m",
+                                   "det_dist_m", "det2theta_degrees", "tilt_angle_degrees" };
     PyObject* input_data_obj;
     PyArrayObject** data_array_obj_ptr; // pointer to pointers
     double incident_angle, pixel_size, beam_center_y, beam_center_x, det_dist, to_pixel;
@@ -381,62 +383,31 @@ static int calc_r(struct Point2D* r_ii, struct Geometry* geo, struct Point2D* ne
     //int64_t last_index;
     //int64_t index = 0;
 
-    if (geo->tilt_angle != 0.0) {
-        tilt_cos = cos(geo->tilt_angle);
-        tilt_sin = sin(geo->tilt_angle);
-        for (size_t rr = 0; rr < geo->rows; ++rr) {
-            for (size_t cc = 0; cc < geo->columns; ++cc) {
-                x_pos = x[cc] * tilt_cos - y[rr] * tilt_sin;
-                y_pos = y[rr] * tilt_cos + x[cc] * tilt_sin;
-                hori_travel_sq = det_dist_sq + x_pos * x_pos;
-                sin_phi = x_pos / sqrt(hori_travel_sq);
-                cos_phi = sqrt(1 - sin_phi * sin_phi);
-                alpha_scattered = asin(y_pos / sqrt(hori_travel_sq + y_pos * y_pos)) - geo->incident_angle + geo->det2theta;
-                cos_alpha = cos(alpha_scattered);
-                q_xy_sq = cos_alpha * cos_alpha + cos_incident * cos_incident - 2.0 * cos_incident * cos_alpha * cos_phi;
-                q_xy = sqrt(q_xy_sq) * sign(x_pos);
-                q_z = sin(alpha_scattered) + sin(geo->incident_angle);
-                q_z_sq = q_z * q_z;
-                q_sq = q_xy_sq + q_z_sq;
-                q_scaler = geo->det_dist * sqrt(0.5 + 1.0 / (2.0 - q_sq));
-                r_xy = q_xy * q_scaler;
-                r_z = q_z * q_scaler;
-                if (r_xy > new_beam_center->x) { new_beam_center->x = r_xy; }
-                if (r_z > new_beam_center->y) { new_beam_center->y = r_z; }
-                if (r_xy < min_x) { min_x = r_xy; }
-                if (r_z < min_y) { min_y = r_z; }
-                r_ii->x = r_xy;
-                r_ii++->y = r_z;
-            }
-        }
-    } else {
+    tilt_cos = cos(geo->tilt_angle);
+    tilt_sin = sin(geo->tilt_angle);
+    for (size_t rr = 0; rr < geo->rows; ++rr) {
         for (size_t cc = 0; cc < geo->columns; ++cc) {
-            x_pos = x[cc];
+            x_pos = x[cc] * tilt_cos - y[rr] * tilt_sin;
+            y_pos = y[rr] * tilt_cos + x[cc] * tilt_sin;
             hori_travel_sq = det_dist_sq + x_pos * x_pos;
             sin_phi = x_pos / sqrt(hori_travel_sq);
             cos_phi = sqrt(1 - sin_phi * sin_phi);
-            for (size_t rr = 0; rr < geo->rows; ++rr) {
-                printf("(%d, %d)\n", rr, cc);
-                y_pos = y[rr];
-                alpha_scattered = asin(y_pos / sqrt(hori_travel_sq + y_pos * y_pos)) - geo->incident_angle + geo->det2theta;
-                cos_alpha = cos(alpha_scattered);
-                q_xy_sq = cos_alpha * cos_alpha + cos_incident * cos_incident - 2.0 * cos_incident * cos_alpha * cos_phi;
-                q_xy = sqrt(q_xy_sq) * sign(x_pos);
-                q_z = sin(alpha_scattered) + sin(geo->incident_angle);
-                q_z_sq = q_z * q_z;
-                q_sq = q_xy_sq + q_z_sq;
-                q_scaler = geo->det_dist * sqrt(0.5 + 1.0 / (2.0 - q_sq));
-                r_xy = q_xy * q_scaler;
-                r_z = q_z * q_scaler;
-                if (r_xy > new_beam_center->x) { new_beam_center->x = r_xy; }
-                if (r_z > new_beam_center->y) { new_beam_center->y = r_z; }
-                if (r_xy < min_x) { min_x = r_xy; }
-                if (r_z < min_y) { min_y = r_z; }
-                r_ii->x = r_xy;
-                r_ii->y = r_z;
-                r_ii += geo->columns;
-            }
-            r_ii += 1 - geo->columns;
+            alpha_scattered = asin(y_pos / sqrt(hori_travel_sq + y_pos * y_pos)) - geo->incident_angle + geo->det2theta;
+            cos_alpha = cos(alpha_scattered);
+            q_xy_sq = cos_alpha * cos_alpha + cos_incident * cos_incident - 2.0 * cos_incident * cos_alpha * cos_phi;
+            q_xy = sqrt(q_xy_sq) * sign(x_pos);
+            q_z = sin(alpha_scattered) + sin(geo->incident_angle);
+            q_z_sq = q_z * q_z;
+            q_sq = q_xy_sq + q_z_sq;
+            q_scaler = geo->det_dist * sqrt(0.5 + 1.0 / (2.0 - q_sq));
+            r_xy = q_xy * q_scaler;
+            r_z = q_z * q_scaler;
+            if (r_xy > new_beam_center->x) { new_beam_center->x = r_xy; }
+            if (r_z > new_beam_center->y) { new_beam_center->y = r_z; }
+            if (r_xy < min_x) { min_x = r_xy; }
+            if (r_z < min_y) { min_y = r_z; }
+            r_ii->x = r_xy;
+            r_ii++->y = r_z;
         }
     }
     new_image_shape->cols = ceil(new_beam_center->x - min_x) + 1;
