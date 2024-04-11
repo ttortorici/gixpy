@@ -62,6 +62,7 @@ static struct Geometry {
     double beam_center_y;
     double det_dist;
     double incident_angle;
+    double det2theta;
     double tilt_angle;
     int64_t rows;
     int64_t columns;
@@ -70,10 +71,12 @@ static struct Geometry {
 static PyObject* transform(PyObject* self, PyObject* args) {
     PyObject* input_data_obj;
     PyArrayObject** data_array_obj_ptr; // pointer to pointers
-    double incident_angle, pixel_size, beam_center_y, beam_center_x, det_dist, tilt_angle, to_pixel;
+    double incident_angle, pixel_size, beam_center_y, beam_center_x, det_dist, to_pixel;
+    double det2theta;
+    double tilt_angle;
     
-    if (!PyArg_ParseTuple(args, "Odddddd", &input_data_obj, &incident_angle, &pixel_size,
-        &beam_center_y, &beam_center_x, &det_dist, &tilt_angle)) {
+    if (!PyArg_ParseTuple(args, "Oddddddd", &input_data_obj, &incident_angle, &pixel_size,
+        &beam_center_y, &beam_center_x, &det_dist, &det2theta, &tilt_angle)) {
         PyErr_SetString(PyExc_ValueError, "The inputs were not parsed.");
         return NULL;
     }
@@ -183,12 +186,13 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         .beam_center_y = (double)rows - beam_center_y * to_pixel,
         .det_dist = det_dist * to_pixel,
         .incident_angle = incident_angle * DEG2RAD,
-        .tilt_angle = incident_angle * DEG2RAD,
+        .det2theta = det2theta * DEG2RAD,
+        .tilt_angle = tilt_angle * DEG2RAD,
         .rows = rows,
         .columns = columns
     };
 
-    struct Point2D* r_arr = (struct Point2D*)malloc((im_size) * sizeof(struct Point2D));
+    struct Point2D* r_arr = (struct Point2D*)malloc(im_size * sizeof(struct Point2D));
     if (r_arr == NULL) {
         PyErr_SetString(PyExc_ValueError, "Failed to allocate memory for distances for transform.");
         free(data_array_obj_ptr);
@@ -207,7 +211,7 @@ static PyObject* transform(PyObject* self, PyObject* args) {
     }
     PySys_WriteStdout("Found new locations for pixels.\nOutput images will have shape (%d, %d)\n", new_im_shape.rows, new_im_shape.cols);
 
-    struct PixelInfo* pixel_info = (struct PixelInfo*)malloc((im_size) * sizeof(struct PixelInfo));
+    struct PixelInfo* pixel_info = (struct PixelInfo*)malloc(im_size * sizeof(struct PixelInfo));
     if (pixel_info == NULL) {
         PyErr_SetString(PyExc_ValueError, "Failed to allocate memory for pixel information.");
         free(data_array_obj_ptr);
@@ -349,10 +353,9 @@ static int calc_pixel_info(struct Point2D* r_ii, struct PixelInfo* pixel_info,
 
 static int calc_r(struct Point2D* r_ii, struct Geometry* geo, struct Point2D* new_beam_center, struct Shape* new_image_shape) {
     //struct Point2D* optr = r_ii;
-    double cos_incident, sin_incident;
+    double cos_incident;
 
     cos_incident = cos(geo->incident_angle);
-    sin_incident = sin(geo->incident_angle);
 
     double* x = (double*)malloc(geo->columns * sizeof(double));
     double* y = (double*)malloc(geo->rows * sizeof(double));
@@ -388,7 +391,7 @@ static int calc_r(struct Point2D* r_ii, struct Geometry* geo, struct Point2D* ne
                 hori_travel_sq = det_dist_sq + x_pos * x_pos;
                 sin_phi = x_pos / sqrt(hori_travel_sq);
                 cos_phi = sqrt(1 - sin_phi * sin_phi);
-                alpha_scattered = asin(y_pos / sqrt(hori_travel_sq + y_pos * y_pos)) - geo->incident_angle;
+                alpha_scattered = asin(y_pos / sqrt(hori_travel_sq + y_pos * y_pos)) - geo->incident_angle + geo->det2theta;
                 cos_alpha = cos(alpha_scattered);
                 q_xy_sq = cos_alpha * cos_alpha + cos_incident * cos_incident - 2.0 * cos_incident * cos_alpha * cos_phi;
                 q_xy = sqrt(q_xy_sq) * sign(x_pos);
@@ -413,8 +416,9 @@ static int calc_r(struct Point2D* r_ii, struct Geometry* geo, struct Point2D* ne
             sin_phi = x_pos / sqrt(hori_travel_sq);
             cos_phi = sqrt(1 - sin_phi * sin_phi);
             for (size_t rr = 0; rr < geo->rows; ++rr) {
+                printf("(%d, %d)\n", rr, cc);
                 y_pos = y[rr];
-                alpha_scattered = asin(y_pos / sqrt(hori_travel_sq + y_pos * y_pos)) - geo->incident_angle;
+                alpha_scattered = asin(y_pos / sqrt(hori_travel_sq + y_pos * y_pos)) - geo->incident_angle + geo->det2theta;
                 cos_alpha = cos(alpha_scattered);
                 q_xy_sq = cos_alpha * cos_alpha + cos_incident * cos_incident - 2.0 * cos_incident * cos_alpha * cos_phi;
                 q_xy = sqrt(q_xy_sq) * sign(x_pos);
