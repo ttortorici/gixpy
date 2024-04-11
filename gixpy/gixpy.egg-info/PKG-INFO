@@ -2,4 +2,6 @@ Metadata-Version: 2.1
 Name: gixpy
 Version: 1.0
 Summary: Python package to quickly transform GIWAXS images using C
+Author-email: edward.tortorici@colorado.edu
+License: GPL
 Requires-Dist: numpy

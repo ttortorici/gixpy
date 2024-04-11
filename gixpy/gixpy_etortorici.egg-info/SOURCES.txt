@@ -1,0 +1,7 @@
+gixpy.c
+pyproject.toml
+setup.py
+gixpy_etortorici.egg-info/PKG-INFO
+gixpy_etortorici.egg-info/SOURCES.txt
+gixpy_etortorici.egg-info/dependency_links.txt
+gixpy_etortorici.egg-info/top_level.txt
