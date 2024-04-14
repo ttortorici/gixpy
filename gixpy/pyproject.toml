@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gixpy"
-version = "1.5"
+version = "1.6"
 authors = [
   { name="Teddy Tortorici", email="edward.tortorici@colorado.edu" },
 ]

@@ -1,3 +1,4 @@
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <numpy/arrayobject.h>
@@ -269,7 +270,7 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         return_array = PyList_AsTuple(return_list);
     }
     
-    PyObject* beam_center_tuple = PyTuple_Pack(2, PyFloat_FromDouble(beam_center_t.y), PyFloat_FromDouble(beam_center_t.y));
+    PyObject* beam_center_tuple = PyTuple_Pack(2, PyFloat_FromDouble(beam_center_t.y), PyFloat_FromDouble(beam_center_t.x));
 
     free(r_arr);
     free(pixel_info);
@@ -430,7 +431,7 @@ int exec_gixpy(PyObject *module) {
     PyModule_AddFunctions(module, gixpy_functions);
 
     PyModule_AddStringConstant(module, "__author__", "Teddy Tortorici");
-    PyModule_AddStringConstant(module, "__version__", "1.5");
+    PyModule_AddStringConstant(module, "__version__", "1.6");
     PyModule_AddIntConstant(module, "year", 2024);
 
     return 0; /* success */
