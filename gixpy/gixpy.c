@@ -184,7 +184,7 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         .beam_center_y = (double)rows - beam_center_y * to_pixel,
         .det_dist = det_dist * to_pixel,
         .incident_angle = incident_angle * DEG2RAD,
-        .tilt_angle = incident_angle * DEG2RAD,
+        .tilt_angle = tilt_angle * DEG2RAD,
         .rows = rows,
         .columns = columns
     };
@@ -431,7 +431,7 @@ int exec_gixpy(PyObject *module) {
     PyModule_AddFunctions(module, gixpy_functions);
 
     PyModule_AddStringConstant(module, "__author__", "Teddy Tortorici");
-    PyModule_AddStringConstant(module, "__version__", "1.6");
+    PyModule_AddStringConstant(module, "__version__", "1.7");
     PyModule_AddIntConstant(module, "year", 2024);
 
     return 0; /* success */
