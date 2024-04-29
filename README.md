@@ -1,5 +1,7 @@
 # Install
 
+You must have MSVC installed to compile the package. The easiest
+
 `pip install gixpy`
 
 # How to use
@@ -26,9 +28,7 @@ for file in dir.glob("*.tif"):
 
 # instantiate list to put data in
 data = [None] * (im_num + 1)  # adding an extra space to put "weights"
-
-for ii, file in enumerate(dir.glob("*.tif")):
-    data[ii] = fabio.open(file).data 
+transformed_data = [None] * (im_num + 1)
 
 # make weights based on exposure time to track how many pixels get moved to each new location
 exposure_time = 1800  # in seconds
@@ -38,7 +38,9 @@ data[-1] = np.ones((rows, columns)) * expsoure_time
 incident_angle = 0.3  # in degrees
 tilt_angle = 0  # in degrees
 
-transformed_data, new_beam_center = gp.transform(
+for ii, file in enumerate(dir.glob("*.tif")):
+    data[ii] = fabio.open(file).data
+    transformed_data[ii], new_beam_center = gp.transform(
     data,
     incident_angle,
     poni.get_pixel1(),
