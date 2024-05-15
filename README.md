@@ -1,6 +1,6 @@
 # Install
 
-You must have MSVC installed to compile the package. The easiest
+You must have MSVC installed to compile the package. There are two options [install the Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) or install [Visual Studio](https://visualstudio.microsoft.com/downloads/). After installing one of these you can simply pip install the package:
 
 `pip install gixpy`
 
