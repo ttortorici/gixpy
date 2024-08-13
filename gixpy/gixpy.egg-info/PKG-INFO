@@ -1,11 +1,12 @@
 Metadata-Version: 2.1
 Name: gixpy
-Version: 1.6
+Version: 2.0
 Summary: Transform GIWAXS images
+Home-page: https://github.com/etortorici/gixpy
 Author-email: Teddy Tortorici <edward.tortorici@colorado.edu>
-Project-URL: Homepage, https://github.com/etortorici/gixpyy
-Project-URL: Issues, https://github.com/etortorici/gixpyy/issues
+Project-URL: Homepage, https://github.com/ttortorici/gixpy
+Project-URL: Issues, https://github.com/ttortorici/gixpy/issues
 Classifier: Programming Language :: Python :: 3
-Classifier: Operating System :: OS Independent
-Requires-Python: >=3.8
+Classifier: Operating System :: Microsoft :: Windows
+Requires-Python: >=3.9
 Description-Content-Type: text/x-rst

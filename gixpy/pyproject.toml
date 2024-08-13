@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "gixpy"
-version = "1.7"
+version = "2.0"
 authors = [
   { name="Teddy Tortorici", email="edward.tortorici@colorado.edu" },
 ]
@@ -13,7 +13,7 @@ requires-python = ">=3.8"
 license = {file = "LICENSE"}
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
 ]
 dynamic = ["readme"]
 
@@ -21,5 +21,5 @@ dynamic = ["readme"]
 readme = {file=["README.md"]}
 
 [project.urls]
-Homepage = "https://github.com/etortorici/gixpyy"
-Issues = "https://github.com/etortorici/gixpyy/issues"
+Homepage = "https://github.com/ttortorici/gixpy"
+Issues = "https://github.com/ttortorici/gixpy/issues"
