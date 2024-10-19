@@ -18,7 +18,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="gixpy.c">
+    <ClCompile Include="transform.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -28,5 +28,9 @@
     </None>
     <None Include="setup.py" />
     <None Include="pyproject.toml" />
+    <None Include="gixpy.py">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="__init__.py" />
   </ItemGroup>
 </Project>

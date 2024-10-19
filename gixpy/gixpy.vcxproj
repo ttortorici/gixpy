@@ -193,12 +193,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="gixpy.c" />
+    <ClCompile Include="transform.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="gixpy.py" />
     <None Include="pyproject.toml" />
     <None Include="setup.py" />
     <None Include="test.py" />
+    <None Include="__init__.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

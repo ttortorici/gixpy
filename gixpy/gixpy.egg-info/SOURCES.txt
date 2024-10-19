@@ -1,7 +1,12 @@
-gixpy.c
+LICENSE
+README.md
 pyproject.toml
 setup.py
+gixpy/__init__.py
+gixpy/gixpy.py
+gixpy/transform.c
 gixpy.egg-info/PKG-INFO
 gixpy.egg-info/SOURCES.txt
 gixpy.egg-info/dependency_links.txt
+gixpy.egg-info/requires.txt
 gixpy.egg-info/top_level.txt
