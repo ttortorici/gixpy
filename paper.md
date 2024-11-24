@@ -180,10 +180,10 @@ $\begin{align}
 In order to suffice the agnosticism goal, after GixPy calculates $q_xy$ and $q_z$ for each pixel location, it then relates these to $r_{xy}$ and $r_{z}$ such that a powder transformation (utilizing \autoref{eq:waxs-transform}) will produce the correct results. This is done by reversing the powder transformation:
 
 $\begin{align}
-    r = d_{sd}\tan\bigg[2\sin^{-1}\bigg(\frac{\lambda q}{4\pi}\bigg)\bigg].
+    r = d_{sd}\tan\bigg[2\sin^{-1}\bigg(\frac{\lambda q}{4\pi}\bigg)\bigg],
 \end{align}$
 
-The following trig identities [@schaum]:
+where $q=\sqrt{q_{xy}^2+q_z^2}$. The following trig identities [@schaum]:
 
 $\begin{align}
 \tan2u &= \frac{2\tan u}{1-\tan^2 u}\\
@@ -193,8 +193,30 @@ $\begin{align}
 can be used to show
 
 $\begin{align}
-    r = d_{sd}q_\eta\frac{\sqrt{4 - q_\eta^2}}{2 - q_\eta^2}.
+    r = d_{sd}q'\frac{\sqrt{4 - q'^2}}{2 - q'^2},
 \end{align}$
+
+where $q'=\lambda q/4\pi$.
+
+The azimuthal angle $\psi$ (as seen in \autoref{fig:scattering-detector} and \autoref{fig:detector-origin}) is related to both $r$ and $q$ in the same way:
+
+$\begin{align}
+    \cos\psi &= \frac{r_{xy}}{r} = \frac{q_{xy}}{q}\\
+    \sin\psi &= \frac{r_z}{r} = \frac{q_z}{q},
+\end{align}$
+
+so
+
+$\begin{align}
+    r_{xy} &= rq'_{xy} \frac{\sqrt{4 - q'^2_{xy} - q'^2_z}}{2 - q'^2_{xy} - q'^2_z}\\
+    r_z &= r q'_z\frac{\sqrt{4 - q'^2_{xy} - q'^2_z}}{2 - q'^2_{xy} - q'^2_z},
+\end{align}$
+
+where $q'_{xy}=\lambda q_{xy}/4\pi$ and $q'_{z}=\lambda q_{z}/4\pi$. For every pixel's location relative to the PONI, GixPy calculates an $r_{xy}$ and $r_z$
+
+
+
+
 
 X-ray scattering experiments using an area detector require converting spacial coordinates to the
 
