@@ -20,7 +20,7 @@ authors:
 affiliations:
     - name: Department of Physics, University of Colorado Boulder
       index: 1
-date: 22 November 2024
+date: 23 November 2024
 bibliography: paper.bib
 ---
 
@@ -30,7 +30,7 @@ Grazing incidence X-ray scattering techniques are utilized to investigate the cr
 
 # Statement of need
 
-There currently exists many tools for transforming wide-angle X-ray scattering (WAXS) and small-angle X-ray scattering (SAXS) images into reciprocal space, including pyFAI [@pyFAI] and Nika [@nika]. However, these tools lack the capability of processing raw images taken for grazing incidence wide/small-angle X-ray scattering (GIWAXS/GISAXS). Here we refer to both GIWAXS and GISAXS as grazing incidence X-ray scattering (GIXS). There exists an existing tool, [pygix](https://github.com/tgdane/pygix), that is capable of processing GIWAXS and GISAXS images into reciprocal space, but this package, GixPy, differentiates itself from pygix through transparency and agnosticism.
+There currently exists many tools for transforming wide-angle X-ray scattering (WAXS) and small-angle X-ray scattering (SAXS) images into reciprocal space, including pyFAI [@pyfai] and Nika [@nika]. However, these tools lack the capability of processing raw images taken for grazing incidence wide/small-angle X-ray scattering (GIWAXS/GISAXS). Here we refer to both GIWAXS and GISAXS as grazing incidence X-ray scattering (GIXS). There exists an existing tool, [pygix](https://github.com/tgdane/pygix), that is capable of processing GIWAXS and GISAXS images into reciprocal space, but this package, GixPy, differentiates itself from pygix through transparency and agnosticism.
 
 GixPy seeks transparency in order to serve not only as a useful tool, but also an educational tool for those who are less familiar with the intricacies of grazing incidence experiments. This goal is achieved by maintaining well documented and commented code that utilizes direct computation (as opposed to relying on look-up tables), and is written with source-code readability in mind. This is intended to allow students to have an accessible resource, with examples, that helps them learn some of the intricacies of GIXS image processing for analysis.
 
