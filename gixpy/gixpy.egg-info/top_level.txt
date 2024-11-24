@@ -1,2 +1,2 @@
 gixpy
-x64
+gixpy_c

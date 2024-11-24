@@ -1,0 +1,56 @@
+\documentclass[border=10pt,varwidth]{standalone}
+\usepackage{tikz,tikz-3dplot}
+\usetikzlibrary{angles}
+\begin{document}
+% ----- First plot    
+
+\begin{minipage}{.5\textwidth}
+    \tdplotsetmaincoords{75}{-15}
+    \begin{tikzpicture} [scale=3, tdplot_main_coords, axis/.style={->,>=latex,blue,thick},vector/.style={-stealth,black,very thick},vector guide/.style={dotted,black,thick}]
+        \node at (0.25,4) {(a)};
+        \coordinate (O) at (0,0,0);
+        \draw[axis] (O) -- (.75,0,0) coordinate (x) node[anchor=west]{$y$};
+        \draw[axis] (O) -- (0,-1,0) node[xshift=2,yshift=-5]{$x$};
+        \draw[axis] (O) -- (0,0,1) node[anchor=south]{$z$};
+        \draw[thick,tdplot_main_coords] (0.25,1.5,0)-- (.25,-1.5,0) -- (-.25,-1.5,0)--(-.25,1.5,0)--cycle;
+        \draw[tdplot_main_coords] (-.4,0,.4/6) coordinate (ai) -- (O); %\node at (-.5,.7) {$k_i$};
+        \draw[tdplot_main_coords,->] (-1*.8,0,.1333333) -- node[midway, above] {$\mathbf{k}_i$} (ai);
+        \draw[tdplot_main_coords,dashed] (-.8,0,0) coordinate (mx) -- (O);
+        \pic [draw,angle radius=1.6cm] {angle = ai--O--mx}; \node at (-.65,0.2) {$\alpha_i$};
+        \draw[tdplot_main_coords,dashed] (O) -- (0.875,0,0.375) coordinate (xy);
+        \draw[tdplot_main_coords,->] (O) -- node[midway, above, yshift=2] {$\mathbf{k}_s$} (0.875,0.6,.375) coordinate (as); %\node at (1.1,2) {$k_s$};
+        \tdplotdrawarc{(0,0,.21)}{.5}{0}{30}{}{}; \node at (.85,1.15) {$\phi_s$};
+        \pic [draw,angle radius=1.62cm] {angle = x--O--xy}; \node at (.7,.3) {$\alpha_s$};
+\end{tikzpicture}
+\end{minipage}
+\begin{minipage}{.5\textwidth}
+    \tdplotsetmaincoords{75}{-15}
+    \begin{tikzpicture} [scale=3, tdplot_main_coords, axis/.style={->,>=latex,blue,thick},vector/.style={-stealth,black,very thick},vector guide/.style={dotted,black,thick}]
+        \node at (0.25,4) {(b)};
+        \coordinate (O) at (0,0,0);
+        \draw[axis] (0.285,0,0) -- (.75,0,0) coordinate (x) node[anchor=west]{$y'$};
+        \draw[axis] (O) -- (0,-1,0) node[xshift=5,yshift=-4]{$x'$};
+        \draw[axis] (O) -- (0,0,1) node[anchor=south]{$z'$};
+        
+        \draw[thick,tdplot_main_coords] (0.25*0.98639,1.5,0.25*0.164399)-- (.25*0.98639,-1.5,0.25*0.164399) -- (-.25*0.98639,-1.5,-0.25*0.164399)--(-.25*0.98639,1.5,-0.25*0.164399)--cycle;
+        
+        \draw[tdplot_main_coords] (-.4,0,0) coordinate (ai) -- (O); %\node at (-.5,.7) {$k_i$};
+        
+        \draw[tdplot_main_coords,->] (-1*.8,0,0) -- node[midway, above] {$\mathbf{k}_i$} (ai);
+        
+        \draw[tdplot_main_coords,dashed] (-.8*0.98639,0,-0.8*0.164399) coordinate (mx) -- (O);
+        
+        \pic [draw,angle radius=1.6cm] {angle = ai--O--mx}; \node at (-.72,-0.2) {$\alpha_i$};
+        
+        \draw[tdplot_main_coords,dashed] (0, 0) -- (0.8*.98639,0,.164399*.875+.375*.98639) coordinate (tipped);
+        
+        \draw[tdplot_main_coords,->] (O) -- node[midway, above, yshift=2, xshift=-4] {$\mathbf{k}_s$} (0.875*.98639-.375*.164399,0.6,.164399*.875+.375*.98639) coordinate (as);
+        
+        \pic [draw,angle radius=1.6cm] {angle = x--O--tipped}; \node[anchor=west] at (.67,.6) {$\alpha_s+\alpha_i$};
+        \tdplotdrawarc{(0,0,0.29)}{.45}{0}{30}{}{}; \node at (.9,1.52) {$\phi_s$};
+\end{tikzpicture}
+\end{minipage}
+
+
+
+\end{document}
