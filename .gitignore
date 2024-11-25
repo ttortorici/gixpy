@@ -102,9 +102,6 @@ ENV/
 env.bak/
 venv.bak/
 
-# bat files
-.bat
-
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -142,3 +139,6 @@ cython_debug/
 *.user
 *.userosscache
 *.sln.docstates
+
+# Ignore batch files
+*.bat
