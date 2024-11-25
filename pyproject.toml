@@ -1,3 +1,47 @@
 [build-system]
-requires = ["setuptools", "wheel", "numpy"]
+requires = ["setuptools>=61.0", "wheel", "numpy"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "gixpy"
+version = "2.3"
+description = "Python package to quickly transform images from grazing incidence X-ray experiments using C"
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+    { name = "Teddy Tortorici", email = "edward.tortorici@colorado.edu" }
+]
+license = { text = "GPL" }
+classifiers = [
+    "Natural Language :: English",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: C",
+    "License :: OSI Approved :: GNU General Public License (GPL)",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "numpy>=1.7",
+    "pyFAI",
+    "fabio",
+    "matplotlib"
+]
+requires-python = ">=3.9"
+
+[project.scripts]
+gixpy-transform = "gixpy.programs:transform"
+
+[project.urls]
+Repository = "https://github.com/ttortorici/gixpy"
+Issues = "https://github.com/ttortorici/gixpy/issues"
+
+[tool.setuptools]
+packages = ["gixpy"]
+include-package-data = true

@@ -94,7 +94,7 @@ def convert_to_poni(poni_pixel: np.ndarray, pixel_size: np.ndarray, shape: np.nd
     elif orientation == 3:
         poni[1] = shape[1] - poni[1]
     poni *= pixel_size          # switch from pixel units to meters
-    return poni
+    return tuple(poni)
 
 
 class PoniNudger:
