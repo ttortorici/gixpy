@@ -1,4 +1,4 @@
-import gixpy
+import source
 from time import perf_counter
 from pyFAI import detectors
 from pyFAI import azimuthalIntegrator
@@ -23,7 +23,7 @@ tilt_angle = np.radians(.11)
 critical_angle = 0.
 
 start = perf_counter()
-y = gixpy.transform(data, flat, pixel, pixel, poni1, poni2, det_dist, incident_angle, tilt_angle, critical_angle)
+y = source.transform(data, flat, pixel, pixel, poni1, poni2, det_dist, incident_angle, tilt_angle, critical_angle)
 end=perf_counter()
 print(f"time: {end-start}")
 

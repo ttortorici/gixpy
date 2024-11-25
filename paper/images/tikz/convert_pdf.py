@@ -25,7 +25,8 @@ def cleanup(directory: Path):
 
 
 if __name__ == "__main__":
-    directory = Path("images/tikz")
+    directory = Path(__file__).resolve().parent
+    print(directory)
     for file in directory.glob("*.pdf"):
         convert_pdf(file)
     cleanup(directory)

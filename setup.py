@@ -6,7 +6,7 @@ with open ("README.md", "r") as f:
 
 c_module = Extension(
     name="gixpy_c",
-    sources=["gixpy\\gixpy.c"],
+    sources=["source\\gixpy.c"],
     include_dirs=[np.get_include()],
     language="c",
 )
@@ -14,7 +14,7 @@ c_module = Extension(
 setup(
     name='gixpy',
     version="2.0",
-    packages=find_packages(include=["gixpy", "gixpy.*"]),
+    packages=find_packages(include=["source", "source.*"]),
     description="Python package to quickly transform images from grazing incidence X-ray experiments using C",
     long_description=long_description,
     long_description_content_type="text/markdown",

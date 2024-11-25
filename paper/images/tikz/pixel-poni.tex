@@ -23,25 +23,25 @@
     }
     \draw[stealth-] (-0.5, 0) --++ (0, .3);
     \draw[stealth-] (-0.5, \y) --++ (0, -.3);
-    \node[anchor=east] at (0, 0.5*\y) {poni1};
+    \node[anchor=east] at (0, 0.5*\y) {$\text{poni}_1$};
 
     \draw[stealth-] (-0.5, \y) --++ (0, 1.5);
     \draw[stealth-] (-0.5, \length-.25) --++ (0, -1.5);
-    \node[anchor=east] at (0, 2.9) {row$_\text{poni}$};
+    \node[anchor=east] at (0, 2.9) {$i_\text{poni}$};
 
     \foreach \ii in {0, \x} {
         \draw (\ii, -.1) --++ (0, -.5);
     }
-    \node at (0.5*\x, -.4) {poni2};
+    \node at (0.5*\x, -.4) {$\text{poni}_2$};
     \draw[stealth-] (0, -.4) --++ (.6, 0);
     \draw[stealth-] (\x, -.4) --++ (-.6, 0);
 
     \foreach \ii in {0.25, \x} {
         \draw (\ii, 5.1) --++ (0, .5);
     }
-    \node at (1.3, 5.4) {column$_\text{poni}$};
-    \draw[stealth-] (0.25, 5.4) --++ (.16, 0);
-    \draw[stealth-] (\x, 5.4) --++ (-.16, 0);
+    \node at (1.3, 5.4) {$j_\text{poni}$};
+    \draw[stealth-] (0.25, 5.4) --++ (.5, 0);
+    \draw[stealth-] (\x, 5.4) --++ (-.5, 0);
 \end{tikzpicture}
 
 \end{document}
