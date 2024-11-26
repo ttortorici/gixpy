@@ -38,9 +38,9 @@ GixPy's agnosticism allows it to be utilized as an intermediary step for anyone 
 
 # Powder transformation
 
-Existing tools, such as Nika and pyFAI transform images with the assumption that sample is a powder, such that the scattering results in Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in \autoref{fig:waxs}. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
-
 ![A typical WAXS/SAXS experiment. A powder sample is exposed to an incident beam, resulting in Debye-Scherrer cones of constructive interference. An area detector is used to intersect the cones to detect rings.\label{fig:waxs}](images/waxs.png)
+
+Existing tools, such as Nika and pyFAI transform images with the assumption that sample is a powder, such that the scattering results in Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in \autoref{fig:waxs}. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
 
 The scattering angle $2\theta$ can be related to reciprocal space through Bragg's law:
 
@@ -68,6 +68,8 @@ GixPy transforms an image, such that a transformation assuming powder symmetry w
 
 Currently, this package only supports geometries where the incident beam in perpendicular to the detector and the sample is brought into the beam path. This means that the point of normal incidence (PONI) on the detector and where the incident beam hits the detector (the beam center) are the same locations on the detector. Other geometries can be expanded if there is a demand to expand this package to be capable of calculations where the detector is rotated relative to the incident beam.
 
+![An example detector with $10 \times 10$ pixels. The PONI is described by the distance (in meters) from the bottom left corner. A user can convert a PONI in the $(i_\text{poni}, j_{poni})$ format using the `gixpy.convert_to_poni(poni_ij, pixel_widths, image_shape)` function.\label{fig:poni}](images/pixel-poni.png)
+
 GixPy assumes the top-left pixel of the detector is the origin of the data array and defines the PONI being defined as the distance from the bottom-left corner of the detector (consistent with pyFAI), as seen in \autoref{fig:poni}. Transforming between $\mathbf{r}_{\text{poni}_{i,j}}$ and $\mathbf{r}_\text{poni}$ can be done with the following relation:
 
 $\begin{align}
@@ -87,8 +89,6 @@ and reversed with
 gixpy.convert_from_poni(poni, pixel_widths, image_shape)
 ```
 
-![An example detector with $10 \times 10$ pixels. The PONI is described by the distance (in meters) from the bottom left corner. A user can convert a PONI in the $(i_\text{poni}, j_{poni})$ format using the `gixpy.convert_to_poni(poni_ij, pixel_widths, image_shape)` function.\label{fig:poni}](images/pixel-poni.png)
-
 # Scattering geometry
 
 In grazing incidence X-ray scattering, the sample is tipped to an angle $\alpha_i$ with respect to the beam (with wavevector $\mathbf{k}_i$). A scattered wave (with wavevector $\mathbf{k}_s$) can be described by two angles: $\alpha_s$ and $\phi_s$, such that
@@ -96,6 +96,8 @@ In grazing incidence X-ray scattering, the sample is tipped to an angle $\alpha_
 $\begin{equation}
 \mathbf{k}_s = \frac{2\pi}{\lambda} R_x(\alpha_s)R_z(\phi_s)\ \hat{y},
 \end{equation}$
+
+![(a) Coordinates in the sample frame. (b) Coordinates in the lab frame.\label{fig:scattering-angles}](images/scattering-angles.png)
 
 where $R_i(\theta)$ are rotation operators and $\hat{y}$ is the $y$-direction in the sample frame (as seen in \autoref{fig:scattering-angles}). In the lab frame, the sample is tipped by $\alpha_i$, so a $R_x(\alpha_i)$ rotation will move from the sample frame from the lab frame, so
 
@@ -108,7 +110,7 @@ $\begin{equation}
 
 where $\hat{y}'$ is the $y$-direction in the lab frame.
 
-![(a) Coordinates in the sample frame. (b) Coordinates in the lab frame.\label{fig:scattering-angles}](images/scattering-angles.png)
+![In the lab frame, the scattering angles can be related to coordinates ($x$ and $z$) on the detector relative to the PONI.\label{fig:scattering-detector}](images/scattering-detector.png)
 
 The scattering angles can then be related to coordinates on the detector as seen in \autoref{fig:scattering-detector}:
 
@@ -119,8 +121,6 @@ x'' &= \sqrt{d_{sd}^2+z^2}\tan(\phi_s),
 \end{align}$
 
 where $z''$ and $x''$ are coordinates on the detector with respect to the $x''$-$z''$-plane. Note: the $z''$-direction is the same as the $z'$-direction, but has its origin at the PONI instead of the sample, but the $x''$-direction is reversed from the $x'$-direction.
-
-![In the lab frame, the scattering angles can be related to coordinates ($x$ and $z$) on the detector relative to the PONI.\label{fig:scattering-detector}](images/scattering-detector.png)
 
 Row $i$ and column $j$ coordinates can be related to $\mathbf{r}$ through the equations
 
@@ -233,6 +233,8 @@ where $q'_{xy}=\lambda q_{xy}/4\pi$ and $q'_{z}=\lambda q_{z}/4\pi$.
 
 # Seeding the transformed image
 
+![The transformed image's PONI and shape can be determined by the minimums and maximuns of the $r_{xy}$ and $r_z$ found in the transformation calculation.\label{fig:new-poni}](images/detector-transform.png)
+
 For every pixel's location relative to the PONI, GixPy calculates an $r_{xy}$ and $r_z$ and then creates a new image where all the counts from each pixel is moved to a location corresponding to $r_{xy}$ and $r_z$ for that pixel. As illustrated in \autoref{fig:new-poni}, the new image will have a PONI corresponding to the maximum value of $r_{xy}$ and $r_z$ of all the pixels:
 
 $\begin{align}
@@ -258,9 +260,9 @@ $\begin{align}
 
 where the minimums are negatively valued if the PONI is on the detector, $\text{ceil}(x)$ is the ceiling function, and the extra 1 is padding to guarantee that there is room for the pixel splitting step. The transformed image is seeded by creating a NumPy array of zeros with shape $(R^T,\ C^T)$. To account for how many pixels are moved to a new location, a second NumPy array, referred to as the transformed flat field
 
-![The transformed image's PONI and shape can be determined by the minimums and maximuns of the $r_{xy}$ and $r_z$ found in the transformation calculation.\label{fig:new-poni}](images/detector-transform.png)
-
 # Pixel splitting
+
+![The counts are split amongst neighboring pixels.\label{fig:pixel-split}](images/pixel-split.png)
 
 A pixel index is determined by flooring $i^T$ and $j^T$, and the counts are split amongst that pixel's neighbors, as seen in \autoref{fig:pixel-split}. Remainders $\rho$ are determined by
 
@@ -280,8 +282,6 @@ $\begin{align}
 
 where the sum of the weights adds to 1. It is clear that when the remainders are zero, then the "current pixel" gets all the counts, and when both remainders are 0.5, all the pixels get 1/4 the counts.
 
-![The counts are split amongst neighboring pixels.\label{fig:pixel-split}](images/pixel-split.png)
-
 # Moving pixels
 
 Every pixel in the original image is looped over, and the new location $(i^T,\ j^T)$ is determined by \autoref{eq:iT} and \autoref{eq:jT}. The weights are calculated for distributing the counts across the neighbors as described in the above section, and the counts at those locations are increased by the number of counts in the original pixel weighted appropriately. 
@@ -290,123 +290,3 @@ Every pixel in the original image is looped over, and the new location $(i^T,\ j
 
 
 
-
-
-X-ray scattering experiments using an area detector require converting spacial coordinates to the
-
-![A scattered wave in the direction of $\mathbf{k}_s$ will result in constructive interference if $\mathbf{q} is a reciprocal lattice vector.\label{fig:ewald-sphere}](images/ewald-sphere.png)
-
-The *forbidden wedge* transformation is due to the fact that, in the sample frame (where the $c$-axis of the crystal is the $z$-axis of the frame), the $q$-vector has $x^{(S)}$, $y^{(S)}$, and $z^{(S)}$ components unless the incident angle $\alpha_i$ is equal to the scattered angle (toward the $z$-axis) $\alpha_s$. The geometry is shown in (a) of the above figure, which can be used to show that the incident and scattering wavevectors in the sample frame are
-
-$$\begin{equation}
-\begin{split}
-    \mathbf{k}_i &= \frac{2\pi}{\lambda}
-    \begin{bmatrix}
-        \cos{\alpha_i}\\
-        0\\
-        -\sin{\alpha_i}
-    \end{bmatrix}^{(S)},\\
-    \mathbf{k}_s &= \frac{2\pi}{\lambda}
-    \begin{bmatrix}
-        \cos{\alpha_s}\cos{\phi_s}\\
-        \cos{\alpha_s}\sin{\phi_s}\\
-        \sin{\alpha_s}
-    \end{bmatrix}^{(S)},
-\end{split}
-\end{equation}$$
-
-where the $(S)$ superscript signifies the vector is in the basis of the sample frame. The $q$-vector is
-
-$$\begin{equation}
-    \mathbf{q} = \mathbf{k}_s - \mathbf{k}_i = \frac{2\pi}{\lambda}
-    \begin{bmatrix}
-        \cos{\alpha_s}\cos{\phi_s} - \cos{\alpha_i}\\
-        \cos{\alpha_s}\sin{\phi_s}\\
-        \sin{\alpha_s} + \sin{\alpha_i}
-    \end{bmatrix}^{(S)}.
-\end{equation}$$
-
-Clearly, $q_y$ is zero when $\phi_s=0$, and therefore $q_x$ and $q_y$ are simultaneously zero when $\phi=0$ and $\cos\alpha_s=\cos\alpha_i$, so the only scattered wave with a $\mathbf{q}$ pointing only in the $z$-direction will be when $\phi_s = 0$ and $\alpha_s = \alpha_i$. Since this situation has equal incident and scattered angle, we can refer to it as the \emph{specular condition}.
-
-A signal on the detector will be due to a scattered wave $\mathbf{k}_s$ hitting the detector, and this event will carry information about the corresponding $\mathbf{q}$. However, since the detector is perpendicular to the $\mathbf{k}_i$, it is easier to work in the lab frame (see (b) of the figure above) to determine which pixel on the detector $\mathbf{k}_f$ hits. The lab frame is rotated with $R_y(-\alpha_i)$ from the sample frame, so $\mathbf{k}_s$ in the lab frame is
-
-$$\begin{equation}
-    \mathbf{k}_s = R_y(-\alpha_i)\frac{2\pi}{\lambda}
-    \begin{bmatrix}
-        \cos{\alpha_s}\cos{\phi_s}\\
-        \cos{\alpha_s}\sin{\phi_s}\\
-        \sin{\alpha_s}
-    \end{bmatrix}^{(S)} = \frac{2\pi}{\lambda}
-    \begin{bmatrix}
-        \cos{(\alpha_s+\alpha_i)}\cos{\phi_s}\\
-        \cos{(\alpha_s+\alpha_i)}\sin{\phi_s}\\
-        \sin{(\alpha_s+\alpha_i)}
-    \end{bmatrix}^{(L)},
-\end{equation}$$
-
-where the $(L)$ superscript signifies the vector is in the lab frame basis. When the specular condition is met $(\alpha_i=\alpha_s)$, the scattered wavevector in the lab frame is
-
-$$\begin{equation}
-    \mathbf{k}_{s,\text{spec}} = \frac{4\pi}{\lambda}\sin{(2\alpha_i)}\hat{\mathbf{z}}^{(L)},
-\end{equation}$$
-
-![Diagram](images/Fig2.png)
-
-The above figure shows how the angles $\alpha_i$, $\alpha_s$, and $\phi_s$ determine where a scattered wave will hit the detector. The location $\mathbf{r}$ will have the same direction as $\mathbf{k}_s$ (i.e. $\mathbf{\hat{k}}_s=\hat{\mathbf{r}}$); therefore
-
-$$\begin{equation}
-    \mathbf{r} = r
-    \begin{bmatrix}
-        \cos{(\alpha_s+\alpha_i)}\cos{\phi_s}\\
-        \cos{(\alpha_s+\alpha_i)}\sin{\phi_s}\\
-        \sin{(\alpha_s+\alpha_i)}
-    \end{bmatrix}^{(L)} = 
-    \begin{bmatrix}
-        d_{s\text{-}d}\\
-        r_{y^{(L)}}\\
-        r_{z^{(L)}}
-    \end{bmatrix}^{(L)},
-\end{equation}$$
-
-where
-
-$$\begin{equation}
-    r = \sqrt{d_{s\text{-}d}^2 + r_{y^{(L)}}^2 + r_{z^{(L)}}^2}.
-\end{equation}$$
-
-![Diagram](images/Fig3.png)
-
-However, the detector's origin is the top-left pixel of the CCD array (see the figure above). This leads to one last transformation from the lab frame to the detector frame where
-
-$$\begin{equation}
-\begin{split}
-    x^{(D)} &= b_x - r_{y^{(L)}},\\
-    y^{(D)} &= b_y - r_{z^{(L)}}.
-\end{split}
-\end{equation}$$
-
-So a detection event at a pixel ($x^{(D)}, y^{(D)}$) corresponds to scattering angles $\alpha_s$ and $\phi_s$ through the following relationship
-
-$$\begin{equation}
-\begin{split}
-    x^{(D)} &= b_x - \cos{(\alpha_s+\alpha_i)}\sin{\phi_s}\sqrt{d_{s\text{-}d}^2 + (b_x - x^{(D)})^2 + (b_y - y^{(D)})^2}\\
-    y^{(D)} &= b_y - \sin{(\alpha_s+\alpha_i)}\sqrt{d_{s\text{-}d}^2 + (b_x - x^{(D)})^2 + (b_y - y^{(D)})^2}\\
-\end{split}
-\end{equation}$$
-
-$$\begin{equation}
-\begin{split}
-    \alpha_s &= \sin^{-1}\bigg(\frac{b_y-y^{(D)}}{\sqrt{d_{s\text{-}d}^2+(b_x-x^{(D)})^2+(b_y-y^{(D)})^2}}\bigg)-\alpha_i\\
-    \phi_s &= \sin^{-1}\bigg(\frac{b_x-x^{(D)}}{\sqrt{d_{s\text{-}d}^2+(b_x-x^{(D)})^2}}\bigg)
-\end{split}
-\end{equation}$$
-
-The $q$-vector can then be calculated with these angles using the equation relating $q$ to the scattering angles. 
-
-![Diagram](images/Fig4.png)
-
-The above plots show the amount of $q$ in each direction based on distance from the beam center on the detector. The lines are contour lines, with red signifying when the vector is 0 in this direction.
-
-# The Algorithm
-
-The algorithm calculates the $q_{xy}=\sqrt{q_x^2+q_y^2}$ and $q_z$ at every pixel based on the parameters given to the function. These are then used to calculate distances on the detector that would have corresponded to these $q$ values if the sample were a powder.
