@@ -13,8 +13,6 @@ c_module = Extension(
 
 # See pyproject.toml for metadata
 setup(
-    name="gixpy",
-    packages=find_packages(include=["gixpy", "gixpy.*"]),
     long_description=long_description,
     long_description_content_type="text/markdown",
     ext_modules=[c_module],

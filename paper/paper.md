@@ -14,9 +14,9 @@ tags:
     - thin films
 authors:
     - name: Edward Tortorici
-        - affiliation: 1
+      affiliation: 1
     - name: Charles T. Rogers
-        - affiliation: 1
+      affiliation: 1
 affiliations:
     - name: Department of Physics, University of Colorado Boulder
       index: 1
