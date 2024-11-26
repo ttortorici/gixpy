@@ -21,7 +21,7 @@ affiliations:
     - name: Department of Physics, University of Colorado Boulder
       index: 1
 date: 22 November 2024
-bibliography: paper/paper.bib
+bibliography: paper.bib
 ---
 
 # Summary
