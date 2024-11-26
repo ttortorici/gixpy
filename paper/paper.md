@@ -40,7 +40,7 @@ GixPy's agnosticism allows it to be utilized as an intermediary step for anyone 
 
 Existing tools, such as Nika and pyFAI transform images with the assumption that sample is a powder, such that the scattering results in Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in \autoref{fig:waxs}. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
 
-![A typical WAXS/SAXS experiment. A powder sample is exposed to an incident beam, resulting in Debye-Scherrer cones of constructive interference. An area detector is used to intersect the cones to detect rings\label{fig:waxs}.](images/waxs.png)
+![A typical WAXS/SAXS experiment. A powder sample is exposed to an incident beam, resulting in Debye-Scherrer cones of constructive interference. An area detector is used to intersect the cones to detect rings.\label{fig:waxs}](images/waxs.png)
 
 The scattering angle $2\theta$ can be related to reciprocal space through Bragg's law:
 
