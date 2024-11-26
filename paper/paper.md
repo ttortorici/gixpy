@@ -38,14 +38,13 @@ GixPy's agnosticism allows it to be utilized as an intermediary step for anyone 
 
 # Powder transformation
 
-![A typical WAXS/SAXS experiment. A powder sample is exposed to an incident beam, resulting in Debye-Scherrer cones of constructive interference. An area detector is used to intersect the cones to detect rings.\label{fig:waxs}](images/waxs.png)
+![A typical WAXS/SAXS experiment. A powder sample is exposed to an incident beam, resulting in Debye-Scherrer cones of constructive interference. An area detector is used to intersect the cones to detect rings.](images/waxs.png)
 
-Existing tools, such as Nika and pyFAI transform images with the assumption that sample is a powder, such that the scattering results in Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in \autoref{fig:waxs}. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
+Existing tools, such as Nika and pyFAI transform images with the assumption that sample is a powder, such that the scattering results in Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in the the figure above. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
 
 The scattering angle $2\theta$ can be related to reciprocal space through Bragg's law:
 
 $\begin{equation}
-\label{eq:bragg}
     q = \frac{4\pi}{\lambda}\sin\theta,
 \end{equation}$
 
@@ -58,7 +57,6 @@ $\begin{equation}
 so a powder data transformation calculates $q$ using the ring radii using
 
 $\begin{equation}
-\label{eq:waxs-transform}
     q = \frac{4\pi}{\lambda}\sin\bigg[\frac{1}{2}\tan^{-1}\bigg(\frac{r}{d_{sd}}\bigg)\bigg].
 \end{equation}$
 
@@ -68,9 +66,9 @@ GixPy transforms an image, such that a transformation assuming powder symmetry w
 
 Currently, this package only supports geometries where the incident beam in perpendicular to the detector and the sample is brought into the beam path. This means that the point of normal incidence (PONI) on the detector and where the incident beam hits the detector (the beam center) are the same locations on the detector. Other geometries can be expanded if there is a demand to expand this package to be capable of calculations where the detector is rotated relative to the incident beam.
 
-![An example detector with $10 \times 10$ pixels. The PONI is described by the distance (in meters) from the bottom left corner. A user can convert a PONI in the $(i_\text{poni}, j_{poni})$ format using the `gixpy.convert_to_poni(poni_ij, pixel_widths, image_shape)` function.\label{fig:poni}](images/pixel-poni.png)
+![An example detector with $10 \times 10$ pixels. The PONI is described by the distance (in meters) from the bottom left corner. A user can convert a PONI in the $(i_\text{poni}, j_{poni})$ format using the `gixpy.convert_to_poni(poni_ij, pixel_widths, image_shape)` function.](images/pixel-poni.png)
 
-GixPy assumes the top-left pixel of the detector is the origin of the data array and defines the PONI being defined as the distance from the bottom-left corner of the detector (consistent with pyFAI), as seen in \autoref{fig:poni}. Transforming between $\mathbf{r}_{\text{poni}_{i,j}}$ and $\mathbf{r}_\text{poni}$ can be done with the following relation:
+GixPy assumes the top-left pixel of the detector is the origin of the data array and defines the PONI being defined as the distance from the bottom-left corner of the detector (consistent with pyFAI), as seen in . Transforming between $\mathbf{r}_{\text{poni}_{i,j}}$ and $\mathbf{r}_\text{poni}$ can be done with the following relation:
 
 $\begin{align}
     \text{poni}_1 &= \bigg(R - i_\text{poni} - \frac{1}{2}\bigg)p_z\\
@@ -97,9 +95,9 @@ $\begin{equation}
 \mathbf{k}_s = \frac{2\pi}{\lambda} R_x(\alpha_s)R_z(\phi_s)\ \hat{y},
 \end{equation}$
 
-![(a) Coordinates in the sample frame. (b) Coordinates in the lab frame.\label{fig:scattering-angles}](images/scattering-angles.png)
+![(a) Coordinates in the sample frame. (b) Coordinates in the lab frame.](images/scattering-angles.png)
 
-where $R_i(\theta)$ are rotation operators and $\hat{y}$ is the $y$-direction in the sample frame (as seen in \autoref{fig:scattering-angles}). In the lab frame, the sample is tipped by $\alpha_i$, so a $R_x(\alpha_i)$ rotation will move from the sample frame from the lab frame, so
+where $R_i(\theta)$ are rotation operators and $\hat{y}$ is the $y$-direction in the sample frame (as seen in ). In the lab frame, the sample is tipped by $\alpha_i$, so a $R_x(\alpha_i)$ rotation will move from the sample frame from the lab frame, so
 
 $\begin{equation}
 \begin{split}
@@ -110,14 +108,13 @@ $\begin{equation}
 
 where $\hat{y}'$ is the $y$-direction in the lab frame.
 
-![In the lab frame, the scattering angles can be related to coordinates ($x$ and $z$) on the detector relative to the PONI.\label{fig:scattering-detector}](images/scattering-detector.png)
+![In the lab frame, the scattering angles can be related to coordinates ($x$ and $z$) on the detector relative to the PONI.](images/scattering-detector.png)
 
-The scattering angles can then be related to coordinates on the detector as seen in \autoref{fig:scattering-detector}:
+The scattering angles can then be related to coordinates on the detector as seen in:
 
 $\begin{align}
-\label{eq:z-scattering}
-z'' &= d_{sd} \tan(\alpha_s+\alpha_i)\\
-x'' &= \sqrt{d_{sd}^2+z^2}\tan(\phi_s),
+    z'' &= d_{sd} \tan(\alpha_s+\alpha_i)\\
+    x'' &= \sqrt{d_{sd}^2+z^2}\tan(\phi_s),
 \end{align}$
 
 where $z''$ and $x''$ are coordinates on the detector with respect to the $x''$-$z''$-plane. Note: the $z''$-direction is the same as the $z'$-direction, but has its origin at the PONI instead of the sample, but the $x''$-direction is reversed from the $x'$-direction.
@@ -125,13 +122,13 @@ where $z''$ and $x''$ are coordinates on the detector with respect to the $x''$-
 Row $i$ and column $j$ coordinates can be related to $\mathbf{r}$ through the equations
 
 $\begin{align}
-x'' &= (j_\text{poni} - j)p_x\\
-z'' &= (i_\text{poni} - i)p_z,
+    x'' &= (j_\text{poni} - j)p_x\\
+    z'' &= (i_\text{poni} - i)p_z,
 \end{align}$
 
 where $i_\text{poni}$ and $j_\text{poni}$ are the row and column index of the PONI respectively, and $p_x$ and $p_z$ are the horizontal and vertical widths of a rectangular pixel.
 
-![(a) The detector origin is the center of the top-left pixel, and $i$ and $j$ are the row and column indices respectively. Distances from the PONI $\mathbf{r}=x\;\mathbf{\hat{x}}+z\;\mathbf{\hat{z}}$ can also be described by their magnitude $r=\sqrt{x^2+z^2}$ and azimuthal angle $\psi$. (b) $\mathbf{r}$ can be calculated from pixel positions $\mathbf{r}_p$ and the position of the beam center $\mathbf{r}_b$ using \cref{eq:det-beamcenter-transform}.\label{fig:detector-origin}](images/detector-origin.png)
+![The detector origin is the center of the top-left pixel, and $i$ and $j$ are the row and column indices respectively. Distances from the PONI $\mathbf{r}=x\;\hat{x}''+z\;\hat{z}''$ can also be described by their magnitude $r=\sqrt{x^2+z^2}$ and azimuthal angle $\psi$.](images/detector-origin.png)
 
 # Reciprocal space
 
@@ -141,13 +138,13 @@ $\begin{equation}
 \mathbf{q} = \mathbf{k}_s - \mathbf{k}_i,
 \end{equation}$
 
-and the magnitude of the scattering vector can be related to the Bragg angle $\theta$ through Bragg's law: \autoref{eq:bragg}. The magnitude of the scattering vector is also related to a lattice plane spacing $d$ via
+and the magnitude of the scattering vector can be related to the Bragg angle $\theta$ through Bragg's law: . The magnitude of the scattering vector is also related to a lattice plane spacing $d$ via
 
 $\begin{equation}
 d = \frac{2\pi}{q}.
 \end{equation}$
 
-In the sample frame (see \autoref{fig:scattering-angles}a),
+In the sample frame (see a),
 
 $\begin{align}
     \mathbf{k}_i &= \frac{2\pi}{\lambda}
@@ -178,13 +175,11 @@ $\begin{equation}
 Many thin films have cylindrical symmetry, in that individual crystallites have a preferred orientation of a lattice vector in the $z'$-direction, but are disordered in rotations on the surface of the substrate [@film-texture-sim]. The cylindrical symmetry of the crystallites leads to cylindrical symmetry in reciprocal space, where $q_{xy}=\sqrt{q_x^2+q_y^2}$ represents the radial distance. A grazing incidence X-ray image transformation into reciprocal space then requires the following calculations:
 
 $\begin{align}
-\label{eq:qxy}
     q_{xy} &= \frac{2\pi}{\lambda}(\sin^2\phi_s+(\cos{\alpha_s}\cos{\phi_s} - \cos{\alpha_i})^2)\\
-\label{eq:qz}
     q_z &= \frac{2\pi}{\lambda}(\sin{\alpha_s}\cos{\phi_s} + \sin{\alpha_i})
 \end{align}$
 
-\autoref{eq:qxy} and \autoref{eq:qz} can be calculated using $\alpha_s$, $\alpha_i$, $\cos\phi_s$, and $\sin\phi_s$ as determined by the detector coordinates $x''$ and $z''$ and the sample-detector distance $d_{sd}$ (see \autoref{fig:scattering-detector}):
+can be calculated using $\alpha_s$, $\alpha_i$, $\cos\phi_s$, and $\sin\phi_s$ as determined by the detector coordinates $x''$ and $z''$ and the sample-detector distance $d_{sd}$ (see ):
 
 $\begin{align}
     \alpha_s &= \tan^{-1}\bigg(\frac{z''}{d_{sd}}\bigg)-\alpha_i\\
@@ -194,7 +189,7 @@ $\begin{align}
 
 # Reverse transform
 
-In order to suffice the agnosticism goal, after GixPy calculates $q_xy$ and $q_z$ for each pixel location, it then relates these to $r_{xy}$ and $r_{z}$ such that a powder transformation (utilizing \autoref{eq:waxs-transform}) will produce the correct results. This is done by reversing the powder transformation:
+In order to suffice the agnosticism goal, after GixPy calculates $q_xy$ and $q_z$ for each pixel location, it then relates these to $r_{xy}$ and $r_{z}$ such that a powder transformation (utilizing ) will produce the correct results. This is done by reversing the powder transformation:
 
 $\begin{align}
     r = d_{sd}\tan\bigg[2\sin^{-1}\bigg(\frac{\lambda q}{4\pi}\bigg)\bigg],
@@ -215,7 +210,7 @@ $\begin{align}
 
 where $q'=\lambda q/4\pi$.
 
-The azimuthal angle $\psi$ (as seen in \autoref{fig:scattering-detector} and \autoref{fig:detector-origin}) is related to both $r$ and $q$ in the same way:
+The azimuthal angle $\psi$ (as seen in ) is related to both $r$ and $q$ in the same way:
 
 $\begin{align}
     \cos\psi &= \frac{r_{xy}}{r} = \frac{q_{xy}}{q}\\
@@ -233,9 +228,9 @@ where $q'_{xy}=\lambda q_{xy}/4\pi$ and $q'_{z}=\lambda q_{z}/4\pi$.
 
 # Seeding the transformed image
 
-![The transformed image's PONI and shape can be determined by the minimums and maximuns of the $r_{xy}$ and $r_z$ found in the transformation calculation.\label{fig:new-poni}](images/detector-transform.png)
+![The transformed image's PONI and shape can be determined by the minimums and maximuns of the $r_{xy}$ and $r_z$ found in the transformation calculation.](images/detector-transform.png)
 
-For every pixel's location relative to the PONI, GixPy calculates an $r_{xy}$ and $r_z$ and then creates a new image where all the counts from each pixel is moved to a location corresponding to $r_{xy}$ and $r_z$ for that pixel. As illustrated in \autoref{fig:new-poni}, the new image will have a PONI corresponding to the maximum value of $r_{xy}$ and $r_z$ of all the pixels:
+For every pixel's location relative to the PONI, GixPy calculates an $r_{xy}$ and $r_z$ and then creates a new image where all the counts from each pixel is moved to a location corresponding to $r_{xy}$ and $r_z$ for that pixel. As illustrated in , the new image will have a PONI corresponding to the maximum value of $r_{xy}$ and $r_z$ of all the pixels:
 
 $\begin{align}
     i^T_\text{poni} &= \text{max}(r_z)\\
@@ -245,9 +240,7 @@ $\begin{align}
 so $r_{xy}$ and $r_z$, for each pixel, correspond to row $i^T$ and column $j^T$ in the transformed image according to
 
 $\begin{align}
-\label{eq:iT}
     i^T &= \text{max}(r_z) - r_z\\
-\label{eq:jT}
     j^T &= \text{max}(r_{xy}) - r_{xy}.
 \end{align}$
 
@@ -262,9 +255,9 @@ where the minimums are negatively valued if the PONI is on the detector, $\text{
 
 # Pixel splitting
 
-![The counts are split amongst neighboring pixels.\label{fig:pixel-split}](images/pixel-split.png)
+![The counts are split amongst neighboring pixels.](images/pixel-split.png)
 
-A pixel index is determined by flooring $i^T$ and $j^T$, and the counts are split amongst that pixel's neighbors, as seen in \autoref{fig:pixel-split}. Remainders $\rho$ are determined by
+A pixel index is determined by flooring $i^T$ and $j^T$, and the counts are split amongst that pixel's neighbors, as seen in . Remainders $\rho$ are determined by
 
 $\begin{align}
     \rho_i &= i^T - \text{floor}(i^T)\\
@@ -284,7 +277,7 @@ where the sum of the weights adds to 1. It is clear that when the remainders are
 
 # Moving pixels
 
-Every pixel in the original image is looped over, and the new location $(i^T,\ j^T)$ is determined by \autoref{eq:iT} and \autoref{eq:jT}. The weights are calculated for distributing the counts across the neighbors as described in the above section, and the counts at those locations are increased by the number of counts in the original pixel weighted appropriately. 
+Every pixel in the original image is looped over, and the new location $(i^T,\ j^T)$ is determined by . The weights are calculated for distributing the counts across the neighbors as described in the above section, and the counts at those locations are increased by the number of counts in the original pixel weighted appropriately. 
 
 
 
