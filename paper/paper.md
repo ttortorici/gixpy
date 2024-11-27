@@ -40,6 +40,8 @@ GixPy's agnosticism allows it to be utilized as an intermediary step for anyone 
 
 Existing tools, such as Nika and pyFAI transform images with the assumption that samples are a powder, such that the scattering results in Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in Figure \ref{fig:waxs}. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
 
+![A typical WAXS/SAXS experiment. A powder sample is exposed to an incident beam, resulting in Debye-Scherrer cones of constructive interference. An area detector is used to intersect the cones to detect rings.\label{fig:waxs}](images/waxs.png)
+
 The scattering angle $2\theta$ can be related to reciprocal space through Bragg's law:
 
 \begin{equation}
@@ -47,29 +49,26 @@ The scattering angle $2\theta$ can be related to reciprocal space through Bragg'
     q = \frac{4\pi}{\lambda}\sin\theta,
 \end{equation}
 
-![A typical WAXS/SAXS experiment. A powder sample is exposed to an incident beam, resulting in Debye-Scherrer cones of constructive interference. An area detector is used to intersect the cones to detect rings.\label{fig:waxs}](images/waxs.png)
-
-where $\lambda$ is the wavelength of the X-rays in the incident beam. The scattering angle can be determined from the radius of the ring on the detector $r$ and the sample-detector distance $d_{sd}$:
+where $\lambda$ is the wavelength of the scattered X-rays. The scattering angle can be determined from the radius of the ring on the detector $r$ and the sample-detector distance $d_{sd}$:
 
 \begin{equation}
     \tan 2\theta = \frac{r}{d_{sd}},
 \end{equation}
 
-so a powder data transformation calculates $q$ using the ring radii using
+so a powder image transformation calculates $q$ from the ring radii using
 
 \begin{equation}
+\label{eq:powder}
     q = \frac{4\pi}{\lambda}\sin\bigg[\frac{1}{2}\tan^{-1}\bigg(\frac{r}{d_{sd}}\bigg)\bigg].
 \end{equation}
 
-GixPy transforms an image, such that a transformation assuming powder symmetry will produce correct results.
+A GixPy transformation processes an image, such that a processed image can be transformed assuming powder symmetry will produce correct results.
 
 # Assumed Geometry
 
-Currently, this package only supports geometries where the incident beam in perpendicular to the detector and the sample is brought into the beam path. This means that the point of normal incidence (PONI) on the detector and where the incident beam hits the detector (the beam center) are the same locations on the detector. Other geometries can be expanded if there is a demand to expand this package to be capable of calculations where the detector is rotated relative to the incident beam.
+Currently, this package supports geometries where the incident beam is perpendicular to the detector and the sample is brought into the beam path. This means that the point of normal incidence (PONI) on the detector and where the incident beam hits the detector (the beam center) are the same locations on the detector.
 
-![An example detector with $10 \times 10$ pixels. The PONI is described by the distance (in meters) from the bottom left corner. A user can convert a PONI in the $(i_\text{poni}, j_{poni})$ format using the `gixpy.convert_to_poni(poni_ij, pixel_widths, image_shape)` function.](images/pixel-poni.png)
-
-GixPy assumes the top-left pixel of the detector is the origin of the data array and defines the PONI being defined as the distance from the bottom-left corner of the detector (consistent with pyFAI), as seen in . Transforming between $\mathbf{r}_{\text{poni}_{i,j}}$ and $\mathbf{r}_\text{poni}$ can be done with the following relation:
+GixPy assumes the top-left pixel of the detector is the origin of the data array and defines the PONI being defined as the distance from the bottom-left corner of the detector (consistent with pyFAI), as seen in Figure \ref{fig:pixel-poni}. Transforming between $\mathbf{r}_{\text{poni}_{i,j}}$ and $\mathbf{r}_\text{poni}$ can be done with the following relation:
 
 \begin{align}
     \text{poni}_1 &= \bigg(R - i_\text{poni} - \frac{1}{2}\bigg)p_z\\
@@ -87,6 +86,8 @@ and reversed with
 ```python
 gixpy.convert_from_poni(poni, pixel_widths, image_shape)
 ```
+
+![An example detector with $10 \times 10$ pixels. The PONI is described by the distance (in meters) from the bottom left corner. A user can convert a PONI in the $(i_\text{poni}, j_{poni})$ format using the `gixpy.convert_to_poni(poni_ij, pixel_widths, image_shape)` function.\label{fig:pixel-poni}](images/pixel-poni.png)
 
 # Scattering geometry
 
