@@ -17,7 +17,7 @@ matplotlib.rcParams['mathtext.fontset'] = 'stix'
 matplotlib.rcParams['font.family'] = 'STIXGeneral'
 
 
-def new_poni(dist: float, poni1: float, poni2: float, shape: tuple, pixel1: float = 75e-6, pixel2: float = 75e-6,
+def new(dist: float, poni1: float, poni2: float, shape: tuple, pixel1: float = 75e-6, pixel2: float = 75e-6,
         wavelength: float = 1.54185e-10, rot1: float = 0, rot2: float = 0, rot3: float = 0, orientation: int = 2):
     """
     Creates a pyFAI.azimuthalIntegrator object from user defined parameters
@@ -31,14 +31,14 @@ def new_poni(dist: float, poni1: float, poni2: float, shape: tuple, pixel1: floa
     return ai
 
 
-def save_new_poni(poni_name: Path, dist: float, poni1: float, poni2: float,
+def save_new(poni_name: Path, dist: float, poni1: float, poni2: float,
              shape: tuple, pixel1: float = 75e-6, pixel2: float = 75e-6,
              wavelength: float = 1.54185, rot1: float = 0, rot2: float = 0, rot3: float = 0, orientation: int = 2):
-    ai = new_poni(dist, poni1, poni2, shape, pixel1, pixel2, wavelength, rot1, rot2, rot3, orientation)
+    ai = new(dist, poni1, poni2, shape, pixel1, pixel2, wavelength, rot1, rot2, rot3, orientation)
     ai.save(poni_name)
 
 
-def convert_from_poni(poni: np.ndarray, pixel_size: np.ndarray, shape: np.ndarray = None, orientation: int = 2):
+def convert_from(poni: np.ndarray, pixel_size: np.ndarray, shape: np.ndarray = None, orientation: int = 2):
     """
     Convert poni to (row, column)
 
@@ -67,7 +67,7 @@ def convert_from_poni(poni: np.ndarray, pixel_size: np.ndarray, shape: np.ndarra
     poni_pixel -= 0.5      # shift from corner of pixel to center of pixel
     return poni_pixel
 
-def convert_to_poni(poni_pixel: np.ndarray, pixel_size: np.ndarray, shape: np.ndarray = None, orientation: int = 2):
+def convert_to(poni_pixel: np.ndarray, pixel_size: np.ndarray, shape: np.ndarray = None, orientation: int = 2):
     """
     Convert (row, column) to PONI
 
@@ -97,7 +97,7 @@ def convert_to_poni(poni_pixel: np.ndarray, pixel_size: np.ndarray, shape: np.nd
     return tuple(poni)
 
 
-class PoniNudger:
+class Nudger:
     """
     PoniNudger objects can be used to manually find/adjust the beam center.
 

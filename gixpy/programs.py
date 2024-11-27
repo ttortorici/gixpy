@@ -58,7 +58,7 @@ def transform():
 
     if args.row_column_pixel_index:
         # convert from pixel index to pyFAI format
-        pixel1, pixel2 = poni.convert_to_poni(poni_pixel=(poni1, poni2), pixel_size=(pixel1, pixel2), shape=file_obj.data.shape)
+        pixel1, pixel2 = poni.convert_to(poni_pixel=(poni1, poni2), pixel_size=(pixel1, pixel2), shape=file_obj.data.shape)
 
     if args.flatfield is None:
         flat_field = np.ones_like(file_obj.data)
@@ -85,7 +85,7 @@ def transform():
             poni1, poni2, distance, incident_angle, tilt_angle, critical_angle
         )
 
-    new_geometry = poni.new_poni(distance, new_poni[0], new_poni[1], data_transformed.shape, pixel1, pixel2, wavelength)
+    new_geometry = poni.new(distance, new_poni[0], new_poni[1], data_transformed.shape, pixel1, pixel2, wavelength)
     new_geometry.save(save_dir / "geometry.poni")
 
     detector = pyFAI.detectors.Detector(pixel1=pixel1, pixel2=pixel2, max_shape=data_transformed.shape, orientation=2)
