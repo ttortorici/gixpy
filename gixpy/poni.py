@@ -8,13 +8,11 @@ For a detector that is surface normal to the incident beam, the PONI is equivale
 import numpy as np
 import matplotlib.pylab as plt
 from matplotlib.colors import LogNorm
-import matplotlib
 import pyFAI
 from pathlib import Path
 import pyFAI.azimuthalIntegrator
 import pyFAI.detectors
-matplotlib.rcParams['mathtext.fontset'] = 'stix'
-matplotlib.rcParams['font.family'] = 'STIXGeneral'
+plt.style.use('gixpy.style')
 
 
 def new(dist: float, poni1: float, poni2: float, shape: tuple, pixel1: float = 75e-6, pixel2: float = 75e-6,
@@ -250,15 +248,11 @@ class Nudger:
                                                     max_shape=self.ai.detector.shape, orientation=orientation)
         print("Saving geometry:")
         print(self.ai)
-        if isinstance(poni_name, Path):
-            path = poni_name.parent
-            name = poni_name.name
-            if name[:-5] != ".poni":
-                name = name.replace(".", "_") + ".poni"
-            poni_name = path / name
-        else:   # a string is also a valid input
-            if poni_name[:-5] != ".poni":
-                poni_name = poni_name(".", "_") + ".poni"
+        if isinstance(poni_name, str):
+            poni_name = Path(poni_name)
+        poni_name = poni_name.with_suffix(".poni")
+        if poni_name.exists():
+            poni_name.unlink()
         self.ai.save(poni_name)
 
 

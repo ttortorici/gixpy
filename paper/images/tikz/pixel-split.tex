@@ -10,10 +10,10 @@
         \draw (\ii, 0) --++ (0, \length);
         \draw (0, \ii) --++ (\length, 0);
     }
-    \node[above] at (0.25*\length, \length) {current pixel};
-    \node[above] at (0.75*\length, \length) {column neighbor};
-    \node[below] at (0.25*\length, 0) {row neighbor};
-    \node[below] at (0.75*\length, 0) {diagonal neighbor};
+    \node[anchor=east] at (0, 0.75*\length) {current pixel};
+    \node[anchor=west] at (\length, 0.75*\length) {column neighbor};
+    \node[anchor=east] at (0, 0.25*\length) {row neighbor};
+    \node[anchor=west] at (\length, 0.25*\length) {diagonal neighbor};
     \draw[dashed] (.25*\length,.75*\length) coordinate(O) node {$\bullet$} node[left] {center} --++ (0.1*\length, 0) node[midway, above] {$\rho_j$} --++ (0,-.2*\length) node[midway, right] {$\rho_i$} node {$\bullet$} node[left] {location};
     \node at (.25*\length, .9*\length) {$(1-\rho_i)(1-\rho_j)$};
     \node at (.75*\length, .75*\length) {$(1-\rho_i)\rho_j$};

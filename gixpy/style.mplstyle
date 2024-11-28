@@ -1,0 +1,10 @@
+mathtext.fontset: cm
+font.family: STIXGeneral
+font.size: 12
+xtick.top: True
+ytick.right: True
+xtick.direction: in
+ytick.direction: in
+xtick.minor.visible: True
+ytick.minor.visible: True
+grid.linestyle: dotted

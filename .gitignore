@@ -142,3 +142,4 @@ cython_debug/
 
 # Ignore batch files
 *.bat
+*.ps1
