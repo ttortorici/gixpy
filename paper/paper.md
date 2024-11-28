@@ -330,6 +330,4 @@ for i in range(image.shape[0]):      # loop over rows of the original image
 ```
 
 
-
-
 # Refrences

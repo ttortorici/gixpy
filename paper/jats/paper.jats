@@ -807,7 +807,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msup><mml:mi>i</mml:mi><mml:mi>T</mml:mi></mml:msup><mml:mo>,</mml:mo><mml:mspace width="0.222em"></mml:mspace><mml:msup><mml:mi>j</mml:mi><mml:mi>T</mml:mi></mml:msup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
   and its neighbors according to the pixel splitting weights. This is
   executed by compiled C code written in gixpy.c, but a Pythonic version
-  of this step could look like:</p>
+  of this step would look like:</p>
   <code language="python">new_image = np.zeros((R_T, C_T))  # as determined by Eq (34) and (35)
 new_flatfield = np.zeros((R_T, C_T))
 for i in range(image.shape[0]):      # loop over rows of the original image
@@ -834,10 +834,6 @@ for i in range(image.shape[0]):      # loop over rows of the original image
         new_flatfield[new_i + 1, new_j] += w_row_neighbor
         new_flatfield[new_i, new_j + 1] += w_column_neighbor
         new_flatfield[new_i + 1, new_j + 1] += w_diagonal_neighbor</code>
-  <p>moved to u for distributing the counts across the neighbors as
-  described in the above section, and the counts at those locations are
-  increased by the number of counts in the original pixel weighted
-  appropriately.</p>
 </sec>
 </body>
 <back>
