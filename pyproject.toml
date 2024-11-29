@@ -47,4 +47,4 @@ packages = ["gixpy"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-fitting = ["**/*.mplstyle"]
+gixpy = ["**/*.mplstyle"]

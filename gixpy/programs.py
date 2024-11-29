@@ -17,16 +17,11 @@ def transform():
     )
     parser.add_argument("filename", help="Path to file containing data.")
     parser.add_argument("poni", help="Either comma-separated poni1,poni2,pixel1,pixel2,distance,(optional)wavelength or path to PONI file (all in meters). If wavelength is not given, 1.5415 Angstrom will be used.")
-    # parser.add_argument("poni1", help="Distance the beam center (PONI) is from the bottom edge of the detector (in meters).")
-    # parser.add_argument("poni2", help="Distance the beam center (PONI) is from the left edge of the detector (in meters).")
-    # parser.add_argument("pixel1", help="Vertical width of a pixel (in meters).")
-    # parser.add_argument("pixel2", help="horizontal width of a pixel (in meters).")
-    # parser.add_argument("distance", help="Sample-detector distance (in meters).")
     parser.add_argument("-P", "--row_column_pixel_index", action="store_true", help="Use row/column index instead of pyFAI convention for beam center (PONI).")
     parser.add_argument("-F", "--flatfield", help="Path to flat field file. Will use array of ones, if not given.")
-    parser.add_argument("-C", "--critical_angle", help="Critical angle of the film (in degrees). This will optionally correct for refraction.")
-    parser.add_argument("-I", "--incident_angle", help="Angle of incidence (in degrees). Will set to 0 (small angle approximation), if not given.")
-    parser.add_argument("-T", "--tilt_angle", help="Angle the sample is tilted relative to the vertical direction (in degrees). Will set to 0, if not given.")
+    parser.add_argument("-C", "--critical_angle", type=float, default=0., help="Critical angle of the film (in degrees). This will optionally correct for refraction.")
+    parser.add_argument("-I", "--incident_angle", type=float, default=0., help="Angle of incidence (in degrees). Will set to 0 (small angle approximation), if not given.")
+    parser.add_argument("-T", "--tilt_angle", type=float, default=0., help="Angle the sample is tilted relative to the vertical direction (in degrees). Will set to 0, if not given.")
     parser.add_argument("-TIF", "--tiff", action="store_true", help="Save as TIFF and EDF (instead of just EDF).")
     args = parser.parse_args()
 
@@ -65,24 +60,25 @@ def transform():
     else:
         flat_field = fabio.open(args.flatfield).data.astype(np.float64)
     
-    if args.critial_angle is None:
-        critical_angle = 0.
-    else:
-        critical_angle = np.radians(float(args.critical_angle))
-    
-    if args.incident_angle is None:
-        incident_angle = 0.
-    else:
-        incident_angle = np.radians(float(args.incident_angle))
-    
-    if args.tilt_angle is None:
-        tilt_angle = 0.
-    else:
-        tilt_angle = np.radians(float(args.tilt_angle))
+    # if args.critial_angle is None:
+    #     critical_angle = 0.
+    # else:
+    #     critical_angle = np.radians(float(args.critical_angle))
+    # 
+    # if args.incident_angle is None:
+    #     incident_angle = 0.
+    # else:
+    #     incident_angle = np.radians(float(args.incident_angle))
+    # 
+    # if args.tilt_angle is None:
+    #     tilt_angle = 0.
+    # else:
+    #     tilt_angle = np.radians(float(args.tilt_angle))
 
     data_transformed, flat_field_transformed, new_poni = gixpy_c.transform(
             file_obj.data.astype(np.float64), flat_field, pixel1, pixel2,
-            poni1, poni2, distance, incident_angle, tilt_angle, critical_angle
+            poni1, poni2, distance, np.radians(args.incident_angle),
+            np.radians(args.tilt_angle), np.radians(args.critical_angle)
         )
 
     new_geometry = poni.new(distance, new_poni[0], new_poni[1], data_transformed.shape, pixel1, pixel2, wavelength)

@@ -14,28 +14,21 @@ static double sign(double x) {
  * Implements an example function.
  */
 PyDoc_STRVAR(gixpy_c_transform_doc, 
-    "transform(image_data, incident_angle_deg, pixel_size_m, beam_center_z_m, beam_center_x_m, det_dist_m, tilt_angle_deg)\n\n"
-    "Transform XRD images with forbidden wedge (move pixels to rotate recipricol space vectors into the detector plane). The resulting image will be a different shape to preserve pixel size and detector distance.\n\n"
-    "Parameters:\n"
-    "image_data : ndarray\n"
-    "    Input array of a single image (2D with shape (rows, columns)) or several images (3D with shape (image_num, rows, columns).\n"
-    "incident_angle_deg : float\n"
-    "    Angle of incidence on the sample (in degrees).\n"
-    "pixel_size_m : float\n"
-    "    Size of a pixel (in meters).\n"
-    "poni_y_m : float\n"
-    "    Distance from the bottom of the detector to the point of normal incidence (in meters).\n"
-    "poni_x_m : float\n"
-    "    Distance from the left of the detector to the point of normal incidence (looking at the detector from the sample) (in meters).\n"
-    "det_dist_m : float\n"
-    "    Distance of the detector from the sample (in meters).\n"
-    "tilt_angle_rad : float\n"
-    "    Angle the detector is rotated relative to the sample normal (in radians).\n"
-    "Returns:\n"
-    "transformed_array : ndarray\n"
-    "    Resulting array with same dimensionality as input. The rows and columns of the image(s) will change to preserve pixel size.\n"
-    "transformed_beam_center: tuple(float, float).\n"
-    "    (z-direction, x-direction) beam center (in pixels) from top-left corner (facing detector from sample)."
+    "transform(data, flat_field, pixel_z, pixel_x, poni_z, poni_x, detector_distance, incident_angle, tilt_angle, critical_angle)\n"
+    "\n"
+    "Transform GIWAXS/GISAXS images.\n"
+    "\n"
+    ":param data: numpy.ndarray - NumPy array of X-ray image data.\n"
+    ":param flat_field: numpy.ndarray - An array to keep track of the pixel movement. Give the image's flat-field image data, if it exists, or an array of ones, if not.\n"
+    ":param pixel_z: float - The size of a pixel in the z-direction (in meters).\n"
+    ":param pixel_x: float - The size of a pixel in the x-direction (in meters).\n"
+    ":param poni_z: float - The distance from the bottom edge of the detector to the point of normal incidence (PONI) in the z-direction (in meters).\n"
+    ":param poni_x: float - The distance from the left edge of the detector to the point of normal incidence (PONI) in the x-direction (in meters).\n"
+    ":param detector_distance: float - The distance from the sample to the detector (in meters).\n"
+    ":param incident_angle: float - The angle of incidence on the sample (in radians).\n"
+    ":param tilt_angle: float - The angle the detector is tilted relative to the sample normal (in radians).\n"
+    ":param critical_angle: float - The critical angle for total external reflection (in radians).\n"
+    ":return: (transformed_data : numpy.ndarray, transformed_flat_field : numpy.ndarray, beam_center : tuple)\n"
 );
 
 struct Point2D {
@@ -259,9 +252,10 @@ static PyObject* transform(PyObject* self, PyObject* args) {
     PyArrayObject** data_array_obj_ptr;
     PyArrayObject** flat_array_obj_ptr; // pointer to pointers
     double incident_angle, pixel_z, pixel_x, poni_z, poni_x, det_dist, tilt_angle, critical_angle;
+    int8_t solid_angle_correction = 1;
     
-    if (!PyArg_ParseTuple(args, "OOdddddddd", &input_data_obj, &input_flat_field_obj, &pixel_z, &pixel_x,
-        &poni_z, &poni_x, &det_dist, &incident_angle, &tilt_angle, &critical_angle)) {
+    if (!PyArg_ParseTuple(args, "OOdddddddd|p", &input_data_obj, &input_flat_field_obj, &pixel_z, &pixel_x,
+        &poni_z, &poni_x, &det_dist, &incident_angle, &tilt_angle, &critical_angle, &solid_angle_correction)) {
         PyErr_SetString(PyExc_ValueError, "The inputs were not parsed.");
         return NULL;
     }
@@ -402,6 +396,12 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         return NULL;
     }
     PySys_WriteStdout("Found new locations for pixels.\nOutput images will have shape (%d, %d)\n", new_im_shape.rows, new_im_shape.cols);
+
+    if (!solid_angle_correction) {
+        for (size_t ii = 0; ii < im_size; ii++) {
+            solid_angles[ii] = 1.;
+        }
+    }
 
     struct PixelInfo* pixel_info = (struct PixelInfo*)malloc((im_size) * sizeof(struct PixelInfo));
     if (pixel_info == NULL) {
