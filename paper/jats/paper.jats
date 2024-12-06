@@ -880,7 +880,10 @@ for i in range(image.shape[0]):      # loop over rows of the original image
     using <inline-formula><alternatives>
     <tex-math><![CDATA[75 \times 75]]></tex-math>
     <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mn>75</mml:mn><mml:mo>×</mml:mo><mml:mn>75</mml:mn></mml:mrow></mml:math></alternatives></inline-formula>
-    μm pixels, a detector distance of <inline-formula><alternatives>
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\mu]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>μ</mml:mi></mml:math></alternatives></inline-formula>m
+    pixels, a detector distance of <inline-formula><alternatives>
     <tex-math><![CDATA[150]]></tex-math>
     <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mn>150</mml:mn></mml:math></alternatives></inline-formula>
     mm, and a grazing-incidence angle of <inline-formula><alternatives>
