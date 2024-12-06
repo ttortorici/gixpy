@@ -1,5 +1,5 @@
 import fabio.tifimage
-import gixpy_c
+import _gixpy
 import gixpy.poni as poni
 import numpy as np
 import argparse
@@ -75,7 +75,7 @@ def transform():
     # else:
     #     tilt_angle = np.radians(float(args.tilt_angle))
 
-    data_transformed, flat_field_transformed, new_poni = gixpy_c.transform(
+    data_transformed, flat_field_transformed, new_poni = _gixpy.transform(
             file_obj.data.astype(np.float64), flat_field, pixel1, pixel2,
             poni1, poni2, distance, np.radians(args.incident_angle),
             np.radians(args.tilt_angle), np.radians(args.critical_angle)

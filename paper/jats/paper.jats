@@ -81,15 +81,17 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <body>
 <sec id="summary">
   <title>Summary</title>
-  <p>Grazing incidence X-ray scattering techniques are utilized to
+  <p>Grazing incidence X-ray scattering techniques are used to
   investigate the crystal structure and orientation of crystallites in
   thin films
   (<xref alt="Steele et al., 2023" rid="ref-how-to-giwaxs" ref-type="bibr">Steele
-  et al., 2023</xref>). X-ray experiments that utilize area detectors to
-  observe the resulting interference pattern, in general, require images
-  to be transformed into data with respect to reciprocal space. However,
-  for grazing incidence X-ray experiments, the experimental geometry
-  leads to additional considerations to this transformation.</p>
+  et al., 2023</xref>). Often area detectors are used to measure the
+  resulting interference pattern, which requires images to be
+  transformed such that the axes represent reciprocal space. X-ray image
+  analysis software often assumes that the sample is a powder. However,
+  for grazing incidence X-ray experiments, if crystallites in the film
+  have a preferred orientation, the image manipulation requires
+  additional considerations.</p>
 </sec>
 <sec id="statement-of-need">
   <title>Statement of need</title>
@@ -102,29 +104,30 @@ a Creative Commons Attribution 4.0 International License (CC BY
   2012</xref>). However, these tools lack the capability of processing
   raw images from grazing incidence wide/small-angle X-ray scattering
   (GIWAXS/GISAXS) experiments. Here we refer to both GIWAXS and GISAXS
-  as grazing incidence X-ray scattering (GIXS). There exists an existing
-  tool,
+  as grazing incidence X-ray scattering (GIXS). An existing tool,
   <ext-link ext-link-type="uri" xlink:href="https://github.com/tgdane/pygix">pygix</ext-link>,
-  that is capable of processing GIWAXS and GISAXS images into reciprocal
-  space. However, GixPy, differentiates itself through its design goals
-  of transparency and workflow agnosticism.</p>
+  is capable of processing GIWAXS and GISAXS images into reciprocal
+  space. However, it lacks transparency, in that, the documentation is
+  sparse, and it utilizes look-up tables to perform the transformation,
+  making the source code difficult to parse. Furthermore, researchers
+  interested in utilizing GIXS experiments likely already do powder
+  X-ray experiments, and have a preferred suite of tools</p>
   <p>GixPy seeks transparency in order to serve not only as a useful
   tool, but also an educational tool for those who are less experienced
-  with of grazing incidence experiments. This goal is achieved by
+  with grazing incidence experiments. This goal is achieved by
   maintaining well documented and commented code that utilizes direct
-  computation (as opposed to relying on look-up tables), and is written
-  with source-code readability in mind. This is intended to allow
-  students and researchers to have an accessible resource, with
-  examples, that helps them learn how to process GIXS image processing
-  and why they need to be processed for analysis.</p>
-  <p>GixPy’s agnosticism allows it to be utilized as an intermediary
-  step for anyone who already has a preferred WAXS/SAXS image processing
-  software. This allows users to not need to learn an entirely new
-  system to do their analysis in, and can simply use GixPy to
-  pre-process an image before giving it to their preferred environment
-  for analysis. However, since GixPy is built as a Python tool, it has
-  been built to seamlessly integrate with pyFAI to serve as a complete
-  processing tool.</p>
+  computation, and is written with source-code readability in mind. This
+  is intended to allow students and researchers to have an accessible
+  resource, with examples, that helps them learn how to process GIXS
+  images and understand the necessity of this procedure.</p>
+  <p>Furthermore, GixPy’s agnosticism allows it to be utilized as an
+  intermediary step for anyone who already has a preferred WAXS/SAXS
+  image processing software. This allows users to not need to learn an
+  entirely new system to do their analysis in, and can simply use GixPy
+  to pre-process an image before giving it to their preferred
+  environment for analysis. However, since GixPy is built as a Python
+  tool, it has been built to seamlessly integrate with pyFAI to serve as
+  a complete processing tool.</p>
 </sec>
 <sec id="powder-transformation">
   <title>Powder transformation</title>

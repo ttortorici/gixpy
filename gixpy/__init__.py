@@ -1,3 +1,3 @@
 from .gixpy import GIXS
-from gixpy_c import transform
+from _gixpy import transform
 from . import poni

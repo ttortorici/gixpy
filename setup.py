@@ -5,7 +5,7 @@ with open ("README.md", "r") as f:
     long_description = f.read()
 
 c_module = Extension(
-    name="gixpy_c",
+    name="_gixpy",
     sources=["gixpy\\gixpy.c"],
     include_dirs=[np.get_include()],
     language="c",

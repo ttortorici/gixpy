@@ -1,6 +1,6 @@
 """
 This script provides a class `GIXS` for Grazing Incidence X-ray Scattering (GIXS) data processing
-using gixpy_c's `transform` method in an easily compatible way with the pyFAI library.
+using _gixpy's `transform` method in an easily compatible way with the pyFAI library.
 It includes methods for loading calibration files, transforming images, saving data, and performing 1D and 2D integrations.
 The script also handles flat field corrections and masking.
 
@@ -8,7 +8,7 @@ Requires:
     - fabio
     - pyFAI
     - numpy
-    - gixpy_c
+    - _gixpy
 
 Classes:
     GIXS: A class for processing GIXS data.
@@ -26,13 +26,13 @@ from pathlib import Path
 import fabio
 import copy
 import pyFAI
-import gixpy_c
+import _gixpy
 
 
 class GIXS:
     """
     GIXS objects load experimental geometry from a pyFAI PONI (point of normal incidence) file (.poni) and
-    allow for easy calling of gixpy_c.transform() on data taken using the geometry detailed in the PONI file.
+    allow for easy calling of _gixpy.transform() on data taken using the geometry detailed in the PONI file.
 
 
     """
@@ -93,7 +93,7 @@ class GIXS:
             raise AttributeError("Must load a poni file first using .load(poni_file: Path)")
         if flat_field is None:
             flat_field = np.ones_like(image)
-        self.data, self.flat_field, new_poni = gixpy_c.transform(
+        self.data, self.flat_field, new_poni = _gixpy.transform(
             image, flat_field, self.ai_original.pixel1, self.ai_original.pixel2,
             self.ai_original.poni1, self.ai_original.poni2, self.ai_original.dist,
             self.incident_angle, self.tilt_angle, np.radians(critical_angle_degrees)

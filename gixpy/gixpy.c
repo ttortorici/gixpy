@@ -13,7 +13,7 @@ static double sign(double x) {
 /*
  * Implements an example function.
  */
-PyDoc_STRVAR(gixpy_c_transform_doc, 
+PyDoc_STRVAR(_gixpy_transform_doc, 
     "transform(data, flat_field, pixel_z, pixel_x, poni_z, poni_x, detector_distance, incident_angle, tilt_angle, critical_angle)\n"
     "\n"
     "Transform GIWAXS/GISAXS images.\n"
@@ -542,20 +542,20 @@ static PyObject* transform(PyObject* self, PyObject* args) {
 
 
 /*
- * List of functions to add to gixpy_c in exec_gixpy_c().
+ * List of functions to add to _gixpy in exec__gixpy().
  */
-static PyMethodDef gixpy_c_functions[] = {
-    { "transform", (PyCFunction)transform, METH_VARARGS | METH_KEYWORDS, gixpy_c_transform_doc },
+static PyMethodDef _gixpy_functions[] = {
+    { "transform", (PyCFunction)transform, METH_VARARGS | METH_KEYWORDS, _gixpy_transform_doc },
     { NULL, NULL, 0, NULL } /* marks end of array */
 };
 
 
 /*
- * Initialize gixpy_c. May be called multiple times, so avoid
+ * Initialize _gixpy. May be called multiple times, so avoid
  * using static state.
  */
-int exec_gixpy_c(PyObject *module) {
-    PyModule_AddFunctions(module, gixpy_c_functions);
+int exec__gixpy(PyObject *module) {
+    PyModule_AddFunctions(module, _gixpy_functions);
 
     PyModule_AddStringConstant(module, "__author__", "Teddy Tortorici");
     PyModule_AddStringConstant(module, "__version__", "2.0");
@@ -566,35 +566,35 @@ int exec_gixpy_c(PyObject *module) {
 
 
 /*
- * Documentation for gixpy_c.
+ * Documentation for _gixpy.
  */
-PyDoc_STRVAR(gixpy_c_doc, 
+PyDoc_STRVAR(_gixpy_doc, 
     "For transforming GIWAXS images to rotate reciprocal space vectors into the detector plane.\n"
     "This introduces a missing/forbidden wedge. The transformation preserves pixel size and detector distance."
 );
 
 
-static PyModuleDef_Slot gixpy_c_slots[] = {
-    { Py_mod_exec, exec_gixpy_c },
+static PyModuleDef_Slot _gixpy_slots[] = {
+    { Py_mod_exec, exec__gixpy },
     { 0, NULL }
 };
 
 
-static PyModuleDef gixpy_c_def = {
+static PyModuleDef _gixpy_def = {
     PyModuleDef_HEAD_INIT,
-    "gixpy_c",
-    gixpy_c_doc,
+    "_gixpy",
+    _gixpy_doc,
     0,              /* m_size */
     NULL,           /* m_methods */
-    gixpy_c_slots,
+    _gixpy_slots,
     NULL,           /* m_traverse */
     NULL,           /* m_clear */
     NULL,           /* m_free */
 };
 
 
-PyMODINIT_FUNC PyInit_gixpy_c() {
-    PyObject *module = PyModuleDef_Init(&gixpy_c_def);
+PyMODINIT_FUNC PyInit__gixpy() {
+    PyObject *module = PyModuleDef_Init(&_gixpy_def);
     import_array();
     return module;
 }
