@@ -26,7 +26,7 @@ bibliography: paper.bib
 
 # Summary
 
-Grazing incidence X-ray scattering techniques are used to investigate the crystal structure and orientation of crystallites in thin films [@how-to-giwaxs]. Often area detectors are used to measure the resulting interference pattern, which requires images to be transformed such that the axes represent reciprocal space. X-ray image analysis software often assumes that the sample is a powder. However, for grazing incidence X-ray experiments, if crystallites in the film have a preferred orientation, the image manipulation requires additional considerations.
+Grazing incidence X-ray scattering techniques are used to investigate the crystal structure of materials localized to a surface with preferred crystal orientation, such as uniaxially aligned thin films [@how-to-giwaxs]. Often area detectors are used to measure the resulting interference pattern, which requires images to be transformed such that the axes represent reciprocal space. X-ray image analysis software often assumes that the sample is a powder. However, for grazing incidence X-ray experiments, if crystallites in the film have a preferred orientation, the image manipulation requires additional considerations.
 
 # Statement of need
 

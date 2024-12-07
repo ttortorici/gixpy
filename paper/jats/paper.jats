@@ -82,8 +82,9 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <sec id="summary">
   <title>Summary</title>
   <p>Grazing incidence X-ray scattering techniques are used to
-  investigate the crystal structure and orientation of crystallites in
-  thin films
+  investigate the crystal structure of materials localized to a surface
+  with preferred crystal orientation, such as uniaxially aligned thin
+  films
   (<xref alt="Steele et al., 2023" rid="ref-how-to-giwaxs" ref-type="bibr">Steele
   et al., 2023</xref>). Often area detectors are used to measure the
   resulting interference pattern, which requires images to be
