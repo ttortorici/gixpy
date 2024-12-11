@@ -20,7 +20,9 @@
         \draw[tdplot_main_coords,dashed] (O) -- (0.875,0,0.375) coordinate (xy);
         \draw[tdplot_main_coords,->] (O) -- node[midway, above, yshift=2] {$\mathbf{k}_s$} (0.875,0.6,.375) coordinate (as); %\node at (1.1,2) {$k_s$};
         \tdplotdrawarc{(0,0,.21)}{.5}{0}{30}{}{}; \node at (.85,1.15) {$\phi_s$};
-        \pic [draw,angle radius=1.62cm] {angle = x--O--xy}; \node at (.7,.3) {$\alpha_s$};
+        \pic [draw,angle radius=1cm] {angle = x--O--xy}; \node at (.5,.27) {$\alpha_s$};
+        \draw[<-] (.55, .75) --++ (-.4, 1.5) node[anchor=south, align=left] {first rotation\\in xy-plane};
+        \draw[<-] (.35, .27) --++ (-1, -1.5) node[anchor=north, align=left] {second rotation\\in yz-plane};
 \end{tikzpicture}
 \end{minipage}
 \begin{minipage}{.5\textwidth}
@@ -46,7 +48,7 @@
         
         \draw[tdplot_main_coords,->] (O) -- node[midway, above, yshift=2, xshift=-4] {$\mathbf{k}_s$} (0.875*.98639-.375*.164399,0.6,.164399*.875+.375*.98639) coordinate (as);
         
-        \pic [draw,angle radius=1.6cm] {angle = x--O--tipped}; \node[anchor=west] at (.67,.6) {$\alpha_s+\alpha_i$};
+        \pic [draw,angle radius=1cm] {angle = x--O--tipped}; \node[anchor=west] at (.5,.57) {$\alpha_s+\alpha_i$};
         \tdplotdrawarc{(0,0,0.29)}{.45}{0}{30}{}{}; \node at (.9,1.52) {$\phi_s$};
 \end{tikzpicture}
 \end{minipage}
