@@ -9,9 +9,9 @@
     \begin{tikzpicture} [scale=3, tdplot_main_coords, axis/.style={->,>=latex,blue,thick},vector/.style={-stealth,black,very thick},vector guide/.style={dotted,black,thick}]
         \node at (0.25,4) {(a)};
         \coordinate (O) at (0,0,0);
-        \draw[axis] (O) -- (.75,0,0) coordinate (x) node[anchor=west]{$y$};
-        \draw[axis] (O) -- (0,-1,0) node[xshift=2,yshift=-5]{$x$};
-        \draw[axis] (O) -- (0,0,1) node[anchor=south]{$z$};
+        \draw[axis] (O) -- (.75,0,0) coordinate (x) node[anchor=west]{$\hat{y}$};
+        \draw[axis] (O) -- (0,-1,0) node[xshift=2,yshift=-5]{$\hat{x}$};
+        \draw[axis] (O) -- (0,0,1) node[anchor=south]{$\hat{z}$};
         \draw[thick,tdplot_main_coords] (0.25,1.5,0)-- (.25,-1.5,0) -- (-.25,-1.5,0)--(-.25,1.5,0)--cycle;
         \draw[tdplot_main_coords] (-.4,0,.4/6) coordinate (ai) -- (O); %\node at (-.5,.7) {$k_i$};
         \draw[tdplot_main_coords,->] (-1*.8,0,.1333333) -- node[midway, above] {$\mathbf{k}_i$} (ai);
@@ -30,9 +30,9 @@
     \begin{tikzpicture} [scale=3, tdplot_main_coords, axis/.style={->,>=latex,blue,thick},vector/.style={-stealth,black,very thick},vector guide/.style={dotted,black,thick}]
         \node at (0.25,4) {(b)};
         \coordinate (O) at (0,0,0);
-        \draw[axis] (0.285,0,0) -- (.75,0,0) coordinate (x) node[anchor=west]{$y'$};
-        \draw[axis] (O) -- (0,-1,0) node[xshift=5,yshift=-4]{$x'$};
-        \draw[axis] (O) -- (0,0,1) node[anchor=south]{$z'$};
+        \draw[axis] (0.285,0,0) -- (.75,0,0) coordinate (x) node[anchor=west]{$\hat{y'}$};
+        \draw[axis] (O) -- (0,-1,0) node[xshift=5,yshift=-4]{$\hat{x'}$};
+        \draw[axis] (O) -- (0,0,1) node[anchor=south]{$\hat{z'}$};
         
         \draw[thick,tdplot_main_coords] (0.25*0.98639,1.5,0.25*0.164399)-- (.25*0.98639,-1.5,0.25*0.164399) -- (-.25*0.98639,-1.5,-0.25*0.164399)--(-.25*0.98639,1.5,-0.25*0.164399)--cycle;
         

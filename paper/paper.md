@@ -10,6 +10,7 @@ tags:
     - GIWAXS
     - GISAXS
     - GIXD
+    - image processing
     - educational
     - thin films
 authors:
@@ -26,7 +27,9 @@ bibliography: paper.bib
 
 # Summary
 
-Grazing incidence X-ray scattering techniques are used to investigate the crystal structure of materials localized to a surface with preferred crystal orientation, such as uniaxially aligned thin films [@how-to-giwaxs]. Often area detectors are used to measure the resulting interference pattern, which requires images to be transformed such that the axes represent reciprocal space. X-ray image analysis software often assumes that the sample is a powder. However, for grazing incidence X-ray experiments, if crystallites in the film have a preferred orientation, the image manipulation requires additional considerations.
+Grazing incidence X-ray scattering techniques are used to investigate the atomic structure of materials localized on a flat surface. Such materials often grow with a preferred crystal orientation, such as uniaxially aligned thin films [@how-to-giwaxs]. Often area detectors are used to image angular scattering. These images are then transformed such that the axes represent Fourier components of the spatial scattering, i.e. "reciprocal space". X-ray image analysis software often assumes that the sample is a randomaly oriented powder. However, for grazing incidence X-ray experiments, crystallites in the film often have a preferred orientation, and the image manipulation requires additional considerations.
+
+X-ray scattering experiments frequently use a parallel beam of X-rays with incident wavevector $\mathbf{k}_i$, with magnitude $2\pi/\lambda$, where $\lambda$ is the X-ray wavelength. The beam is directed at a sample (an example is shown in Figure \ref{fig:waxs}). X-rays scattered from electrons in the sample have a new wavevector $\mathbf{k}_s$. Here, we consider the case of elastic scattering where the magnitude of $\mathbf{k}_s$ is $2\pi/\lambda$. Scattered X-rays are collected on a planar imaging array of X-ray detecting pixels [@medical-imaging]. The measured values at a pixel location determine $\mathbf{k}_s$, and along with the known $\mathbf{k}_i$, the so-called reciprocal space can be built from the scattering vector $\mathbf{q}$:
 
 \begin{equation}
 \label{eq:q}
@@ -41,13 +44,13 @@ There currently exist many tools for transforming wide-angle X-ray scattering (W
 
 GixPy seeks transparency in order to serve not only as a useful tool, but also an educational tool for those who are less experienced with grazing incidence experiments. This goal is achieved by maintaining well documented and commented code that utilizes direct computation, and is written with source-code readability in mind. This is intended to allow students and researchers to have an accessible resource, with examples, that helps them learn how to process GIXS images and understand the necessity of this procedure.
 
-Furthermore, GixPy is workflow agnostic, allowing it to be utilized as an intermediary step for anyone who already has a preferred WAXS/SAXS image processing software. This allows users to not need to learn an entirely new system to do their analysis in, and can simply use GixPy to pre-process an image before giving it to their preferred environment for analysis. However, since GixPy is built as a Python tool, it has been built to seamlessly integrate with pyFAI to serve as a complete processing tool.
+Furthermore, GixPy is designed to be compatible with any existing software used to process X-ray images for powder samples. This makes GixPy is workflow agnostic and allows it to be utilized as an intermediary step for anyone who already has a preferred WAXS/SAXS image processing software. This allows users to not need to learn an entirely new system, and can simply use GixPy to pre-process an image before giving it to their preferred environment for analysis. However, since GixPy is built as a Python tool, it has been built to seamlessly integrate with pyFAI to serve as a complete processing tool as well.
 
 # Powder transformation
 
-Existing tools, such as Nika and pyFAI transform images with the assumption that samples are a powder, such that the scattering results in Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in Figure \ref{fig:waxs}. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
+Existing tools, such as Nika and pyFAI transform images with the assumption that samples are a powder, such that the X-ray scattering results in angularly symmetric Debye-Scherrer cones [@cullity3rd]. A typical experimental setup is exemplified in Figure \ref{fig:waxs}. An area detector is used to intersect the Debye-Scherrer cones to detect rings of constructive interference.
 
-The scattering angle $2\theta$ can be related to reciprocal space through Bragg's law:
+The scattering angle for a Debye-Scherrer cone ($2\theta$ in Figure \ref{fig:waxs}) can be related to the characteristic Fourier components of spatial electron density with any particular Fourier component $q$ related to a specific Debye-Scherrer cone angle by Bragg's law:
 
 \begin{equation}
 \label{eq:bragg}
@@ -143,13 +146,13 @@ where $\overleftrightarrow{R}_{\hat{x}}(\theta)$ and $\overleftrightarrow{R}_{\h
     \end{bmatrix},
 \end{align}
 
-and the column vectors are in the $(\hat{x},\ \hat{y},\ \hat{z})$ basis. Typically rotations are applied in the opposite order [@how-to-giwaxs], but here, we choose this non-conventional order of operations because it leads to simplifications in the calculations detailed in this paper.
+and the column vectors are in the $(\hat{x},\ \hat{y},\ \hat{z})$ basis. Typically rotations are applied in the opposite order [@how-to-giwaxs], but here, we choose this order of operations because it leads to simplifications in the calculations detailed in this paper.
 
-![(a) Coordinates in the sample frame. (b) Coordinates in the lab frame.\label{fig:scattering-angles}](images/scattering-angles.png)
+![(a) Coordinates in the sample frame are such that $\hat{z}$ is normal to the substrate surface and the incident beam $\mathbf{k}_i$ lies in the $\hat{y}$-$\hat{z}$ plane. (b) Coordinates in the lab frame are such that the $\mathbf{k}_i$ is in the $\hat{y}$-direction.\label{fig:scattering-angles}](images/scattering-angles.png)
 
 In the lab frame (see Figure \ref{fig:scattering-angles}b), the axes are denoted by the basis vectors $\hat{x}'$, $\hat{y}'$, and $\hat{z}'$, and column vectors in this basis are denoted with a prime ($'$). The lab frame basis vectors are determined by rotating the sample frame basis vectors with $\overleftrightarrow{R}_{\hat{x}'}(\alpha_i)$. Therefore, a vector can be transfromed from the sample frame basis to the lab frame basis with this rotation operator. Therefore,
 
-For example,
+For example, the $\mathbf{k}_i$ in the sample frame is
 
 \begin{equation}
 \label{eq:ki-def}
@@ -158,7 +161,13 @@ For example,
         0 \\
         \cos\alpha_i \\
         -\sin\alpha_i
-    \end{bmatrix} = \frac{2\pi}{\lambda} \overleftrightarrow{R}_{\hat{x}'}(\alpha_i)
+    \end{bmatrix},
+\end{equation}
+
+and can be written in the lab frame as
+
+\begin{equation}
+    \mathbf{k}_i = \frac{2\pi}{\lambda} \overleftrightarrow{R}_{\hat{x}'}(\alpha_i)
     \begin{bmatrix}
         0 \\
         \cos\alpha_i \\
@@ -171,7 +180,7 @@ For example,
     \end{bmatrix}'.  \\
 \end{equation}
 
-Therefore
+Therefore, in the lab frame, $\mathbf{k}_s$ is
 
 \begin{equation}
 \begin{split}
@@ -192,7 +201,7 @@ Therefore
 \end{split}
 \end{equation}
 
-Furthermore, the PONI frame is a two dimensional space in the plane of the detector with basis vectors $\hat{x}''$ and $\hat{z}''$ and with an origin at the PONI. The $\hat{z}''$-direction is the same as the $\hat{z}'$-direction, but the $\hat{x}''$-direction is in the opposite direction of $\hat{x}'$, so that positive $\phi_s$ correspond to positive $x''$. A pixel location can be expressed as $\mathbf{r}''$, where
+A third reference frame, the PONI frame, is a two dimensional space in the plane of the detector with basis vectors $\hat{x}''$ and $\hat{z}''$ and with an origin at the PONI. The $\hat{z}''$-direction is the same as the $\hat{z}'$-direction, but the $\hat{x}''$-direction is in the opposite direction of $\hat{x}'$, so that positive $\phi_s$ correspond to positive $x''$. A pixel location can be expressed as $\mathbf{r}''$, where
 
 \begin{equation}
     \mathbf{r}'' = x''\ \hat{x}'' + z''\ \hat{z}''.
@@ -222,7 +231,7 @@ where $i_\text{poni}$ and $j_\text{poni}$ are the row and column index of the PO
 
 # Reciprocal space
 
-The scattering vector, defined in Equation (\ref{eq:q}), is directly related to the Fourier components of the lattice vectors that describe the crystal. This Fourier space is referred to as reciprocal space, and the magnitude of the scattering vector can be related to the Bragg angle $\theta$ through Bragg's law: Equation (\ref{eq:bragg}). The magnitude of the scattering vector is also related to a lattice plane spacing $d$ via
+The scattering vector, defined in Equation (\ref{eq:q}), is directly related to the Fourier components of the electron density of the material under study. This Fourier space is referred to as reciprocal space, and the magnitude of the scattering vector can be related to the Bragg angle $\theta$ through Bragg's law: Equation (\ref{eq:bragg}). For crystalline materials, the magnitude of the scattering vector is also related to a lattice plane spacing $d$ via
 
 \begin{equation}
     d = \frac{2\pi}{q}.
@@ -243,7 +252,7 @@ Many thin films have cylindrical symmetry, in that individual crystallites have 
 
 \begin{align}
 \label{eq:qxy}
-    q_{xy} &= \frac{2\pi}{\lambda}(\sin^2\phi_s+(\cos{\alpha_s}\cos{\phi_s} - \cos{\alpha_i})^2)\\
+    q_{xy} &= \frac{2\pi}{\lambda}\sqrt{\sin^2\phi_s+(\cos{\alpha_s}\cos{\phi_s} - \cos{\alpha_i})^2}\\
 \label{eq:qz}
     q_z &= \frac{2\pi}{\lambda}(\sin{\alpha_s}\cos{\phi_s} + \sin{\alpha_i}).
 \end{align}
@@ -424,7 +433,7 @@ The intensity of a ray that travels a distance $d_\text{ray}$ relative to its in
     \frac{I({d_\text{ray}})}{I({d_{sd}})} = \bigg(\frac{d_{sd}}{d_\text{ray}}\bigg)^2 =  \cos^2{2\theta}.
 \end{equation}
 
-Furthermore, the angle of incidence of the ray makes with the detector will be the same as the scattering angle and will result in a further attenuation of $\cos{2\theta}$. Therefore, rays that hit the detector will lose intensity according to $\cos^3{2\theta}$. A solid angle correction reverses this attentuation by multiplying the counts in pixels by $\Omega$, where
+Furthermore, the incident X-ray beam sees the pixel area subtended as smaller by an additional factor of $\cos2\theta$ due to the ray not hitting the pixel sufrace-normal. The angle of incidence the ray makes with the detector will be the same as the scattering angle. To correct the number of X-ray counts to a value that would be seen by a pixel surface-normal to the X-ray beam therefore requires an additional factor of $\cos2\theta$. Therefore, rays that hit the detector will lose intensity---compared to a hypothetical spherical array of pixels with the sample at the center of the sphere---according to $\cos^3{2\theta}$. A solid angle correction reverses this attentuation by multiplying the counts in pixels by $\Omega$, where
 
 \begin{equation}
 \label{eq:solid-angle}

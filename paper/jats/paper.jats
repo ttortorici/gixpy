@@ -73,6 +73,7 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <kwd>GIWAXS</kwd>
 <kwd>GISAXS</kwd>
 <kwd>GIXD</kwd>
+<kwd>image processing</kwd>
 <kwd>educational</kwd>
 <kwd>thin films</kwd>
 </kwd-group>
@@ -171,29 +172,38 @@ a Creative Commons Attribution 4.0 International License (CC BY
   is intended to allow students and researchers to have an accessible
   resource, with examples, that helps them learn how to process GIXS
   images and understand the necessity of this procedure.</p>
-  <p>Furthermore, GixPy is workflow agnostic, allowing it to be utilized
-  as an intermediary step for anyone who already has a preferred
-  WAXS/SAXS image processing software. This allows users to not need to
-  learn an entirely new system to do their analysis in, and can simply
-  use GixPy to pre-process an image before giving it to their preferred
-  environment for analysis. However, since GixPy is built as a Python
-  tool, it has been built to seamlessly integrate with pyFAI to serve as
-  a complete processing tool.</p>
+  <p>Furthermore, GixPy is designed to be compatible with any existing
+  software used to process X-ray images for powder samples. This makes
+  GixPy is workflow agnostic and allows it to be utilized as an
+  intermediary step for anyone who already has a preferred WAXS/SAXS
+  image processing software. This allows users to not need to learn an
+  entirely new system, and can simply use GixPy to pre-process an image
+  before giving it to their preferred environment for analysis. However,
+  since GixPy is built as a Python tool, it has been built to seamlessly
+  integrate with pyFAI to serve as a complete processing tool as
+  well.</p>
 </sec>
 <sec id="powder-transformation">
   <title>Powder transformation</title>
   <p>Existing tools, such as Nika and pyFAI transform images with the
-  assumption that samples are a powder, such that the scattering results
-  in Debye-Scherrer cones
+  assumption that samples are a powder, such that the X-ray scattering
+  results in angularly symmetric Debye-Scherrer cones
   (<xref alt="Cullity &amp; Stock, 2014" rid="ref-cullity3rd" ref-type="bibr">Cullity
   &amp; Stock, 2014</xref>). A typical experimental setup is exemplified
   in Figure <xref alt="[fig:waxs]" rid="figU003Awaxs">[fig:waxs]</xref>.
   An area detector is used to intersect the Debye-Scherrer cones to
   detect rings of constructive interference.</p>
-  <p>The scattering angle <inline-formula><alternatives>
+  <p>The scattering angle for a Debye-Scherrer cone
+  (<inline-formula><alternatives>
   <tex-math><![CDATA[2\theta]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mn>2</mml:mn><mml:mi>θ</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
-  can be related to reciprocal space through Bragg’s law:</p>
+  in Figure <xref alt="[fig:waxs]" rid="figU003Awaxs">[fig:waxs]</xref>)
+  can be related to the characteristic Fourier components of spatial
+  electron density with any particular Fourier component
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[q]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>q</mml:mi></mml:math></alternatives></inline-formula>
+  related to a specific Debye-Scherrer cone angle by Bragg’s law:</p>
   <p><named-content id="eqU003Abragg" content-type="equation"><disp-formula><alternatives>
   <tex-math><![CDATA[
       q = \frac{4\pi}{\lambda}\sin\theta,]]></tex-math>
@@ -412,13 +422,30 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mover><mml:mi>x</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mo>,</mml:mo><mml:mspace width="0.222em"></mml:mspace><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mo>,</mml:mo><mml:mspace width="0.222em"></mml:mspace><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:math></alternatives></inline-formula>
   basis. Typically rotations are applied in the opposite order
   (<xref alt="Steele et al., 2023" rid="ref-how-to-giwaxs" ref-type="bibr">Steele
-  et al., 2023</xref>), but here, we choose this non-conventional order
-  of operations because it leads to simplifications in the calculations
-  detailed in this paper.</p>
+  et al., 2023</xref>), but here, we choose this order of operations
+  because it leads to simplifications in the calculations detailed in
+  this paper.</p>
   <fig>
-    <caption><p>(a) Coordinates in the sample frame. (b) Coordinates in
-    the lab
-    frame.<styled-content id="figU003Ascattering-angles"></styled-content></p></caption>
+    <caption><p>(a) Coordinates in the sample frame are such that
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\hat{z}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover></mml:math></alternatives></inline-formula>
+    is normal to the substrate surface and the incident beam
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\mathbf{k}_i]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>𝐤</mml:mi><mml:mi>i</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+    lies in the <inline-formula><alternatives>
+    <tex-math><![CDATA[\hat{y}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover></mml:math></alternatives></inline-formula>-<inline-formula><alternatives>
+    <tex-math><![CDATA[\hat{z}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover></mml:math></alternatives></inline-formula>
+    plane. (b) Coordinates in the lab frame are such that the
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\mathbf{k}_i]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>𝐤</mml:mi><mml:mi>i</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+    is in the <inline-formula><alternatives>
+    <tex-math><![CDATA[\hat{y}]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover></mml:math></alternatives></inline-formula>-direction.<styled-content id="figU003Ascattering-angles"></styled-content></p></caption>
     <graphic mimetype="image" mime-subtype="png" xlink:href="scattering-angles.png" />
   </fig>
   <p>In the lab frame (see Figure
@@ -443,14 +470,21 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mrow><mml:mover><mml:mi>x</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
   Therefore, a vector can be transfromed from the sample frame basis to
   the lab frame basis with this rotation operator. Therefore,</p>
-  <p>For example,</p>
-  <p><named-content id="eqU003Aki-def" content-type="equation"><disp-formula><tex-math><![CDATA[
+  <p>For example, the <inline-formula><alternatives>
+  <tex-math><![CDATA[\mathbf{k}_i]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>𝐤</mml:mi><mml:mi>i</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+  in the sample frame is</p>
+  <p><named-content id="eqU003Aki-def" content-type="equation"><disp-formula><alternatives>
+  <tex-math><![CDATA[
       \mathbf{k}_i = \frac{2\pi}{\lambda}
       \begin{bmatrix}
           0 \\
           \cos\alpha_i \\
           -\sin\alpha_i
-      \end{bmatrix} = \frac{2\pi}{\lambda} \overleftrightarrow{R}_{\hat{x}'}(\alpha_i)
+      \end{bmatrix},]]></tex-math>
+  <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mi>𝐤</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:mrow><mml:mo stretchy="true" form="prefix">[</mml:mo><mml:mtable><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mn>0</mml:mn></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mo>cos</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mi>−</mml:mi><mml:mo>sin</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub></mml:mtd></mml:mtr></mml:mtable><mml:mo stretchy="true" form="postfix">]</mml:mo></mml:mrow><mml:mo>,</mml:mo></mml:mrow></mml:math></alternatives></disp-formula></named-content></p>
+  <p>and can be written in the lab frame as</p>
+  <p><disp-formula><tex-math><![CDATA[\mathbf{k}_i = \frac{2\pi}{\lambda} \overleftrightarrow{R}_{\hat{x}'}(\alpha_i)
       \begin{bmatrix}
           0 \\
           \cos\alpha_i \\
@@ -460,8 +494,11 @@ a Creative Commons Attribution 4.0 International License (CC BY
           0 \\
           1 \\
           0
-      \end{bmatrix}'.  \\]]></tex-math></disp-formula></named-content></p>
-  <p>Therefore</p>
+      \end{bmatrix}'.  \\]]></tex-math></disp-formula></p>
+  <p>Therefore, in the lab frame, <inline-formula><alternatives>
+  <tex-math><![CDATA[\mathbf{k}_s]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:msub><mml:mi>𝐤</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:math></alternatives></inline-formula>
+  is</p>
   <p><disp-formula><alternatives>
   <tex-math><![CDATA[\begin{split}
       \mathbf{k}_s &= \frac{2\pi}{\lambda} \overleftrightarrow{R}_{\hat{x}'}(\alpha_i)
@@ -480,8 +517,9 @@ a Creative Commons Attribution 4.0 International License (CC BY
       \end{bmatrix}'.
   \end{split}]]></tex-math>
   <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtable><mml:mtr><mml:mtd columnalign="right" style="text-align: right"><mml:msub><mml:mi>𝐤</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mrow><mml:mover><mml:mi>x</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mrow><mml:mo stretchy="true" form="prefix">[</mml:mo><mml:mtable><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mi>−</mml:mi><mml:mo>sin</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mo>cos</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mo>sin</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:mtd></mml:mtr></mml:mtable><mml:mo stretchy="true" form="postfix">]</mml:mo></mml:mrow><mml:mi>′</mml:mi></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right" style="text-align: right"></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mrow><mml:mover><mml:mi>x</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mrow><mml:mover><mml:mi>x</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mrow><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mspace width="0.222em"></mml:mspace><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right" style="text-align: right"></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mrow><mml:mover><mml:mi>x</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mrow><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mspace width="0.222em"></mml:mspace><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right" style="text-align: right"></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:mrow><mml:mo stretchy="true" form="prefix">[</mml:mo><mml:mtable><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mi>−</mml:mi><mml:mo>sin</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mo>cos</mml:mo><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="center" style="text-align: center"><mml:mo>sin</mml:mo><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub></mml:mtd></mml:mtr></mml:mtable><mml:mo stretchy="true" form="postfix">]</mml:mo></mml:mrow><mml:mi>′</mml:mi><mml:mi>.</mml:mi></mml:mtd></mml:mtr></mml:mtable></mml:math></alternatives></disp-formula></p>
-  <p>Furthermore, the PONI frame is a two dimensional space in the plane
-  of the detector with basis vectors <inline-formula><alternatives>
+  <p>A third reference frame, the PONI frame, is a two dimensional space
+  in the plane of the detector with basis vectors
+  <inline-formula><alternatives>
   <tex-math><![CDATA[\hat{x}'']]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>x</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>″</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
   and <inline-formula><alternatives>
@@ -601,16 +639,16 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <title>Reciprocal space</title>
   <p>The scattering vector, defined in Equation
   (<xref alt="1" rid="eqU003Aq">1</xref>), is directly related to the
-  Fourier components of the lattice vectors that describe the crystal.
-  This Fourier space is referred to as reciprocal space, and the
+  Fourier components of the electron density of the material under
+  study. This Fourier space is referred to as reciprocal space, and the
   magnitude of the scattering vector can be related to the Bragg angle
   <inline-formula><alternatives>
   <tex-math><![CDATA[\theta]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>θ</mml:mi></mml:math></alternatives></inline-formula>
   through Bragg’s law: Equation
-  (<xref alt="2" rid="eqU003Abragg">2</xref>). The magnitude of the
-  scattering vector is also related to a lattice plane spacing
-  <inline-formula><alternatives>
+  (<xref alt="2" rid="eqU003Abragg">2</xref>). For crystalline
+  materials, the magnitude of the scattering vector is also related to a
+  lattice plane spacing <inline-formula><alternatives>
   <tex-math><![CDATA[d]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>d</mml:mi></mml:math></alternatives></inline-formula>
   via</p>
@@ -649,11 +687,11 @@ a Creative Commons Attribution 4.0 International License (CC BY
   <p><named-content id="eqU003Aqz" content-type="equation"><disp-formula><alternatives>
   <tex-math><![CDATA[\begin{aligned}
   \label{eq:qxy}
-      q_{xy} &= \frac{2\pi}{\lambda}(\sin^2\phi_s+(\cos{\alpha_s}\cos{\phi_s} - \cos{\alpha_i})^2)\\
+      q_{xy} &= \frac{2\pi}{\lambda}\sqrt{\sin^2\phi_s+(\cos{\alpha_s}\cos{\phi_s} - \cos{\alpha_i})^2}\\
 
       q_z &= \frac{2\pi}{\lambda}(\sin{\alpha_s}\cos{\phi_s} + \sin{\alpha_i}).
   \end{aligned}]]></tex-math>
-  <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtable><mml:mtr><mml:mtd columnalign="right" style="text-align: right"><mml:msub><mml:mi>q</mml:mi><mml:mrow><mml:mi>x</mml:mi><mml:mi>y</mml:mi></mml:mrow></mml:msub></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msup><mml:mo>sin</mml:mo><mml:mn>2</mml:mn></mml:msup><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>cos</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>−</mml:mo><mml:mo>cos</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right" style="text-align: right"><mml:msub><mml:mi>q</mml:mi><mml:mi>z</mml:mi></mml:msub></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>sin</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:mo>sin</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mi>.</mml:mi></mml:mtd></mml:mtr></mml:mtable></mml:math></alternatives></disp-formula></named-content></p>
+  <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mtable><mml:mtr><mml:mtd columnalign="right" style="text-align: right"><mml:msub><mml:mi>q</mml:mi><mml:mrow><mml:mi>x</mml:mi><mml:mi>y</mml:mi></mml:mrow></mml:msub></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:msqrt><mml:mrow><mml:msup><mml:mo>sin</mml:mo><mml:mn>2</mml:mn></mml:msup><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>cos</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>−</mml:mo><mml:mo>cos</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mn>2</mml:mn></mml:msup></mml:mrow></mml:msqrt></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right" style="text-align: right"><mml:msub><mml:mi>q</mml:mi><mml:mi>z</mml:mi></mml:msub></mml:mtd><mml:mtd columnalign="left" style="text-align: left"><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>2</mml:mn><mml:mi>π</mml:mi></mml:mrow><mml:mi>λ</mml:mi></mml:mfrac><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mo>sin</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>cos</mml:mo><mml:msub><mml:mi>ϕ</mml:mi><mml:mi>s</mml:mi></mml:msub><mml:mo>+</mml:mo><mml:mo>sin</mml:mo><mml:msub><mml:mi>α</mml:mi><mml:mi>i</mml:mi></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mi>.</mml:mi></mml:mtd></mml:mtr></mml:mtable></mml:math></alternatives></disp-formula></named-content></p>
   <p>Equations (<xref alt="[eq:qxy]" rid="eqU003Aqxy">[eq:qxy]</xref>)
   and (<xref alt="6" rid="eqU003Aqz">6</xref>) can be calculated using
   <inline-formula><alternatives>
@@ -1094,13 +1132,21 @@ for i in range(image.shape[0]):      # loop over rows of the original image
   <p><disp-formula><alternatives>
   <tex-math><![CDATA[\frac{I({d_\text{ray}})}{I({d_{sd}})} = \bigg(\frac{d_{sd}}{d_\text{ray}}\bigg)^2 =  \cos^2{2\theta}.]]></tex-math>
   <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mfrac><mml:mrow><mml:mi>I</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>d</mml:mi><mml:mtext mathvariant="normal">ray</mml:mtext></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>I</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:msub><mml:mi>d</mml:mi><mml:mrow><mml:mi>s</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:mfrac><mml:mo>=</mml:mo><mml:mo minsize="2.4" maxsize="2.4" stretchy="false" form="prefix">(</mml:mo><mml:mfrac><mml:msub><mml:mi>d</mml:mi><mml:mrow><mml:mi>s</mml:mi><mml:mi>d</mml:mi></mml:mrow></mml:msub><mml:msub><mml:mi>d</mml:mi><mml:mtext mathvariant="normal">ray</mml:mtext></mml:msub></mml:mfrac><mml:msup><mml:mo minsize="2.4" maxsize="2.4" stretchy="false" form="postfix">)</mml:mo><mml:mn>2</mml:mn></mml:msup><mml:mo>=</mml:mo><mml:msup><mml:mo>cos</mml:mo><mml:mn>2</mml:mn></mml:msup><mml:mrow><mml:mn>2</mml:mn><mml:mi>θ</mml:mi></mml:mrow><mml:mi>.</mml:mi></mml:mrow></mml:math></alternatives></disp-formula></p>
-  <p>Furthermore, the angle of incidence of the ray makes with the
-  detector will be the same as the scattering angle and will result in a
-  further attenuation of <inline-formula><alternatives>
-  <tex-math><![CDATA[\cos{2\theta}]]></tex-math>
-  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo>cos</mml:mo><mml:mrow><mml:mn>2</mml:mn><mml:mi>θ</mml:mi></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
-  Therefore, rays that hit the detector will lose intensity according to
+  <p>Furthermore, the incident X-ray beam sees the pixel area subtended
+  as smaller by an additional factor of <inline-formula><alternatives>
+  <tex-math><![CDATA[\cos2\theta]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo>cos</mml:mo><mml:mn>2</mml:mn><mml:mi>θ</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  due to the ray not hitting the pixel sufrace-normal. The angle of
+  incidence the ray makes with the detector will be the same as the
+  scattering angle. To correct the number of X-ray counts to a value
+  that would be seen by a pixel surface-normal to the X-ray beam
+  therefore requires an additional factor of
   <inline-formula><alternatives>
+  <tex-math><![CDATA[\cos2\theta]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mo>cos</mml:mo><mml:mn>2</mml:mn><mml:mi>θ</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>.
+  Therefore, rays that hit the detector will lose intensity—compared to
+  a hypothetical spherical array of pixels with the sample at the center
+  of the sphere—according to <inline-formula><alternatives>
   <tex-math><![CDATA[\cos^3{2\theta}]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msup><mml:mo>cos</mml:mo><mml:mn>3</mml:mn></mml:msup><mml:mrow><mml:mn>2</mml:mn><mml:mi>θ</mml:mi></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.
   A solid angle correction reverses this attentuation by multiplying the
