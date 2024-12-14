@@ -1035,6 +1035,71 @@ for i in range(image.shape[0]):      # loop over rows of the original image
         new_flatfield[new_i, new_j + 1] += w_column_neighbor
         new_flatfield[new_i + 1, new_j + 1] += w_diagonal_neighbor</code>
 </sec>
+<sec id="tilt-correction">
+  <title>Tilt correction</title>
+  <p>In general, the sample could be rotated about the
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[\hat{y}']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>-direction
+  (direction of the beam) relative to <inline-formula><alternatives>
+  <tex-math><![CDATA[\hat{z}'']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>″</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  (the veritcal direction of the detector). This creates an angle
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[\eta]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>η</mml:mi></mml:math></alternatives></inline-formula>
+  between <inline-formula><alternatives>
+  <tex-math><![CDATA[\hat{z}'']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>″</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  (detector frame) and <inline-formula><alternatives>
+  <tex-math><![CDATA[\hat{z}']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  (lab frame) rotated in the <inline-formula><alternatives>
+  <tex-math><![CDATA[\hat{y}']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>-direction
+  (see Figure
+  <xref alt="[fig:tilt]" rid="figU003Atilt">[fig:tilt]</xref>). This
+  so-called <italic>tilt angle</italic> will often be non-zero even if
+  the stage is machined precisely and the detector is well aligned
+  because the sample often will not have parallel surfaces, so its top
+  surface is not garanteed to be parallel to the bottom surface.</p>
+  <p>The tilt correction rotates the <inline-formula><alternatives>
+  <tex-math><![CDATA[\mathbf{r}'']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>𝐫</mml:mi><mml:mi>″</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  vectors representing the location of each pixel relative to the PONI
+  to rotate <inline-formula><alternatives>
+  <tex-math><![CDATA[\hat{z}'']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>″</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  so that they form an angle <inline-formula><alternatives>
+  <tex-math><![CDATA[\eta]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>η</mml:mi></mml:math></alternatives></inline-formula>
+  with <inline-formula><alternatives>
+  <tex-math><![CDATA[\hat{z}']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>z</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>.
+  The distances <inline-formula><alternatives>
+  <tex-math><![CDATA[x'']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>x</mml:mi><mml:mi>″</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  and <inline-formula><alternatives>
+  <tex-math><![CDATA[z'']]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>z</mml:mi><mml:mi>″</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>
+  are first determined by row, column index and pixel size, and then
+  rotated with <inline-formula><alternatives>
+  <tex-math><![CDATA[\overleftrightarrow{R}_{\hat{y}}(\eta)]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:msub><mml:mover><mml:mi>R</mml:mi><mml:mo accent="true">⃡</mml:mo></mml:mover><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover></mml:msub><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>η</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></inline-formula>.</p>
+  <fig>
+    <caption><p>The sample being tilted along the
+    <inline-formula><alternatives>
+    <tex-math><![CDATA[\hat{y}']]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mover><mml:mi>y</mml:mi><mml:mo accent="true">̂</mml:mo></mml:mover><mml:mi>′</mml:mi></mml:mrow></mml:math></alternatives></inline-formula>-direction
+    will result in an angle <inline-formula><alternatives>
+    <tex-math><![CDATA[\eta]]></tex-math>
+    <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>η</mml:mi></mml:math></alternatives></inline-formula>
+    between the vertical directions of the lab and detector frames. The
+    perspective of these axes is looking at the detector from the
+    sample.<styled-content id="figU003Atilt"></styled-content></p></caption>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="tilt.png" />
+  </fig>
+</sec>
 <sec id="flat-field-correction">
   <title>Flat-field correction</title>
   <p>A flat-field correction is used to compensate for relative gains of

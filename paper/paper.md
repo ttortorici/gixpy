@@ -401,6 +401,14 @@ for i in range(image.shape[0]):      # loop over rows of the original image
         new_flatfield[new_i + 1, new_j + 1] += w_diagonal_neighbor
 ```
 
+# Tilt correction
+
+In general, the sample could be rotated about the $\hat{y}'$-direction (direction of the beam) relative to $\hat{z}''$ (the veritcal direction of the detector). This creates an angle $\eta$ between $\hat{z}''$ (detector frame) and $\hat{z}'$ (lab frame) rotated in the $\hat{y}'$-direction (see Figure \ref{fig:tilt}). This so-called *tilt angle* will often be non-zero even if the stage is machined precisely and the detector is well aligned because the sample often will not have parallel surfaces, so its top surface is not garanteed to be parallel to the bottom surface.
+
+The tilt correction rotates the $\mathbf{r}''$ vectors representing the location of each pixel relative to the PONI to rotate $\hat{z}''$ so that they form an angle $\eta$ with $\hat{z}'$. The distances $x''$ and $z''$ are first determined by row, column index and pixel size, and then rotated with $\overleftrightarrow{R}_{\hat{y}}(\eta)$.
+
+![The sample being tilted along the $\hat{y}'$-direction will result in an angle $\eta$ between the vertical directions of the lab and detector frames. The perspective of these axes is looking at the detector from the sample.\label{fig:tilt}](images/tilt.png)
+
 # Flat-field correction
 
 A flat-field correction is used to compensate for relative gains of each pixel [@medical-imaging]. A corrected image $C$ is computed from the raw data $R$ and a flat-field image $F$, where the flat-field values represent the relative sensitivity of each pixel:
