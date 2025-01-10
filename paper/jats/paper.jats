@@ -1256,6 +1256,7 @@ for i in range(image.shape[0]):      # loop over rows of the original image
       <source>Powder Diffraction</source>
       <year iso-8601-date="2013">2013</year>
       <uri>http://arxiv.org/abs/1412.6367</uri>
+      <pub-id pub-id-type="doi">10.1017/s0885715613000924</pub-id>
     </element-citation>
   </ref>
   <ref id="ref-nika">
@@ -1363,6 +1364,7 @@ for i in range(image.shape[0]):      # loop over rows of the original image
       <year iso-8601-date="2000">2000</year>
       <volume>1</volume>
       <uri>http://spiedl.org/terms</uri>
+      <pub-id pub-id-type="doi">10.1117/3.832716.ch4</pub-id>
       <fpage>223</fpage>
       <lpage>328</lpage>
     </element-citation>
