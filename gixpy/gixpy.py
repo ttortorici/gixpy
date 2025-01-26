@@ -252,6 +252,47 @@ class GIXS:
             azimuth_range = (-center - 0.5 * size, -center + 0.5 * size)
         return self.integrate1d(file_to_save, q_range, azimuth_range, exposure_time, q_bins, unit)
     
+    def pole(self, file_to_save: str = "pole", azimuth_range: tuple = None, q_range: tuple = None,
+             exposure_time: float = None, bins: int = 1000, unit: str = "q_A^-1"):
+        """
+        Radial integrate to produce a pole plot (intensity vs azimuthal).
+
+        :param file_to_save: name to save the data to. Will save in the same directory that the PONI file was loaded from.
+        :param q_range: integration range for reciprocal space in units specified.
+        :param azimuth_range: integration range for azimuthal angle. Start and stop angles in degrees.
+                              0 is to the right, and the positive direction is counter-clockwise.
+                              This is also called a "sector"
+        :param center: alternative to `azimuthal_range`, you can give a center and a size in angles.
+        :param size: angular range of the sector that will be centered at `center`.
+        :param exposure_time: amount of exposure time in any units you want. Will scale the data to "per time"
+        :param q_bins: number of bins for reciprocal space. This will be the number of data points in the result.
+        :param unit: type of units for reciprocal space. See pyFAI docs for options.
+        :return: (reciprocal_space, counts_per_apparent_pixel)
+        """
+        if azimuth_range is None:
+            azimuth_range = (0, 180)
+        azimuth_range = (-azimuth_range[1], -azimuth_range[0])
+
+        path = self.dir / "pole-plots"
+        path.mkdir(parents=True, exist_ok=True)
+        
+        file_to_save += ".edf"
+        file_to_save = path / file_to_save
+
+        if exposure_time is None:
+            normalization_factor = 1
+        else:
+            normalization_factor = float(exposure_time)
+        pole = self.ai.integrate_radial(
+            self.data, bins, 
+            radial_range=q_range,
+            azimuth_range=azimuth_range,
+            mask=self.mask, flat=self.flat_field, 
+            correctSolidAngle=False, 
+            radial_unit=unit, filename=str(file_to_save), normalization_factor=normalization_factor
+        )
+        return pole
+
     def transform_python(self, data: np.ndarray, flat_field: np.ndarray, refraction_angle: float = 0.0):
         det_dist = self.ai_original.get_dist()
         # x is to the right from the PONI
