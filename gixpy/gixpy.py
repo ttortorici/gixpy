@@ -20,7 +20,6 @@ Usage:
     Create an instance of the GIXS class, load a calibration file, transform an image, and perform integrations.
 """
 
-
 import numpy as np
 from pathlib import Path
 import fabio
@@ -289,8 +288,13 @@ class GIXS:
             azimuth_range=azimuth_range,
             mask=self.mask, flat=self.flat_field, 
             correctSolidAngle=False, 
-            radial_unit=unit, filename=str(file_to_save), normalization_factor=normalization_factor
+            radial_unit=unit, normalization_factor=normalization_factor
         )
+        file_text = '#       azimuth              I           sigma \n'
+        for ii in range(len(pole[0])):
+            file_text += f"{pole[0][ii]:.6e}\t{pole[1][ii]:.6e}\n"
+        with open(path / file_to_save, "r") as f:
+            f.write(file_text)
         return pole
 
     def transform_python(self, data: np.ndarray, flat_field: np.ndarray, refraction_angle: float = 0.0):
@@ -383,4 +387,3 @@ class GIXS:
                 flat_transform[row + 1, col + 1] += flat_field[rr, cc] * self.weight_dia_neighbor[rr, cc]
                 
         return data_transform, flat_transform, (poni1_transform, poni2_transform)
-
