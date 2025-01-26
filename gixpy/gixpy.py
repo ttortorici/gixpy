@@ -290,13 +290,14 @@ class GIXS:
             correctSolidAngle=False, 
             radial_unit=unit, normalization_factor=normalization_factor
         )
+        pole_return = (-pole[0][::-1], pole[1][::-1])
         file_text = '#       azimuth              I           sigma \n'
-        for ii in range(len(pole[0])):
-            file_text += f"{pole[0][ii]:.6e}\t{pole[1][ii]:.6e}\n"
-        with open(path / file_to_save, "r") as f:
+        for ii in range(len(pole_return[0])):
+            file_text += f"{pole_return[0][ii]:.6e}\t{pole_return[1][ii]:.6e}\n"
+        with open(file_to_save, "w") as f:
             f.write(file_text)
-        return pole
-
+        return pole_return
+    
     def transform_python(self, data: np.ndarray, flat_field: np.ndarray, refraction_angle: float = 0.0):
         det_dist = self.ai_original.get_dist()
         # x is to the right from the PONI
