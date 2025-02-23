@@ -1,4 +1,4 @@
-cff-version: 1.0
+cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
   - family-names: Tortorici
@@ -7,3 +7,4 @@ authors:
 title: "GixPy: A Python package for transforming grazing incidence X-ray scattering images"
 version: 2.7.1
 date-released: 2024-04-11
+url: "https://github.com/ttortorici/gixpy
