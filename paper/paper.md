@@ -150,7 +150,7 @@ and the column vectors are in the $(\hat{x},\ \hat{y},\ \hat{z})$ basis. Typical
 
 ![(a) Coordinates in the sample frame are such that $\hat{z}$ is normal to the substrate surface and the incident beam $\mathbf{k}_i$ lies in the $\hat{y}$-$\hat{z}$ plane. (b) Coordinates in the lab frame are such that the $\mathbf{k}_i$ is in the $\hat{y}$-direction.\label{fig:scattering-angles}](images/scattering-angles.png)
 
-In the lab frame (see Figure \ref{fig:scattering-angles}b), the axes are denoted by the basis vectors $\hat{x}'$, $\hat{y}'$, and $\hat{z}'$, and column vectors in this basis are denoted with a prime ($'$). The lab frame basis vectors are determined by rotating the sample frame basis vectors with $\overleftrightarrow{R}_{\hat{x}'}(\alpha_i)$. Therefore, a vector can be transfromed from the sample frame basis to the lab frame basis with this rotation operator. Therefore,
+In the lab frame (see Figure \ref{fig:scattering-angles}b), the axes are denoted by the basis vectors $\hat{x}'$, $\hat{y}'$, and $\hat{z}'$, and column vectors in this basis are denoted with a prime ($'$). The lab frame basis vectors are determined by rotating the sample frame basis vectors with $\overleftrightarrow{R}_{\hat{x}'}(\alpha_i)$. Therefore, a vector can be transformed from the sample frame basis to the lab frame basis with this rotation operator.
 
 For example, the $\mathbf{k}_i$ in the sample frame is
 
@@ -265,7 +265,7 @@ Equations (\ref{eq:qxy}) and (\ref{eq:qz}) can be calculated using $\alpha_s$, $
 \label{eq:cos_phi}
     \cos\phi_s & = \sqrt{\frac{z''^2+d_{sd}^2}{x''^2+z''^2+d_{sd}^2}}\\
 \label{eq:sin_phi}
-    \sin\phi_s & = \frac{x''}{\sqrt{x''^2+z''^2+d_{sd}^2}}
+    \sin\phi_s & = \frac{x''}{\sqrt{x''^2+z''^2+d_{sd}^2}}.
 \end{align}
 
 # Reverse transform
