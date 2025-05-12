@@ -159,10 +159,12 @@ static int calc_r(struct Point2D* r_ii, double* solid_angle, struct Geometry* ge
         return 0;
     }
     for (double cc = 0; cc < (double)geo->columns; ++cc) {
-        *(x++) = beamcenter_x - cc * geo->pixel_x;
+        *x = beamcenter_x - cc * geo->pixel_x;
+        x++;
     }
     for (double rr = 0; rr < (double)geo->rows; ++rr) {
-        *(z++) = beamcenter_z - (double)rr * geo->pixel_z;
+        *z = beamcenter_z - (double)rr * geo->pixel_z;
+        z++;
     }
     x -= geo->columns;  // reset pointer position to beginning of array
 	z -= geo->rows;     // reset pointer position to beginning of array
@@ -238,7 +240,7 @@ static int calc_r(struct Point2D* r_ii, double* solid_angle, struct Geometry* ge
 
     new_image_shape->cols = (npy_intp)ceil(new_beam_center->x - min_x) + 1;
     new_image_shape->rows = (npy_intp)ceil(new_beam_center->z - min_z) + 1;
-    PySys_WriteStdout("Transformed beam center: (%.2f, %.2f) pixels\n", new_beam_center->z, new_beam_center->x);
+    PySys_WriteStdout("Transformed beam center: (%.2e, %.2e) pixels\n", new_beam_center->z, new_beam_center->x);
     free(x);
     free(z);
     return 1;
@@ -252,10 +254,9 @@ static PyObject* transform(PyObject* self, PyObject* args) {
     PyArrayObject** data_array_obj_ptr;
     PyArrayObject** flat_array_obj_ptr; // pointer to pointers
     double incident_angle, pixel_z, pixel_x, poni_z, poni_x, det_dist, tilt_angle, critical_angle;
-    int8_t solid_angle_correction = 1;
     
-    if (!PyArg_ParseTuple(args, "OOdddddddd|p", &input_data_obj, &input_flat_field_obj, &pixel_z, &pixel_x,
-        &poni_z, &poni_x, &det_dist, &incident_angle, &tilt_angle, &critical_angle, &solid_angle_correction)) {
+    if (!PyArg_ParseTuple(args, "OOdddddddd", &input_data_obj, &input_flat_field_obj, &pixel_z, &pixel_x,
+        &poni_z, &poni_x, &det_dist, &incident_angle, &tilt_angle, &critical_angle)) {
         PyErr_SetString(PyExc_ValueError, "The inputs were not parsed.");
         return NULL;
     }
@@ -272,12 +273,14 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         PyErr_SetString(PyExc_ValueError, "Failed to allocate memory for data array pointers.");
         return NULL;
     }
+
     flat_array_obj_ptr = malloc(sizeof(PyArrayObject*));
     if (flat_array_obj_ptr == NULL) {
         PyErr_SetString(PyExc_ValueError, "Failed to allocate memory for flat field array pointers.");
         free(data_array_obj_ptr);
         return NULL;
     }
+
     data_array_obj_ptr[0] = (PyArrayObject*)input_data_obj;
     if (PyArray_TYPE(data_array_obj_ptr[0]) != NPY_DOUBLE) {
         PyErr_SetString(PyExc_ValueError, "The data input must be a NumPy array of dtype=np.float64.");
@@ -285,6 +288,7 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         free(flat_array_obj_ptr);
         return NULL;
     }
+
     flat_array_obj_ptr[0] = (PyArrayObject*)input_flat_field_obj;
     if (PyArray_TYPE(flat_array_obj_ptr[0]) != NPY_DOUBLE) {
         PyErr_SetString(PyExc_ValueError, "The flat field input must be a NumPy array of dtype=np.float64.");
@@ -349,6 +353,11 @@ static PyObject* transform(PyObject* self, PyObject* args) {
 	flat_array_ptr[0] = PyArray_DATA(flat_array_obj_ptr[0]);
 
     PySys_WriteStdout("Loaded image and flat field with shape (%d, %d).\n", rows, columns);
+
+    PySys_WriteStdout("Poni              = (%.4f, %.4f)\n", poni_z, poni_x);
+    PySys_WriteStdout("Pixel size        = (%.3e, %.3e)\n", pixel_z, pixel_x);
+    PySys_WriteStdout("Detector distance = %.6f m\n", det_dist);
+    PySys_WriteStdout("Incident angle    = %.6f\n", incident_angle);
     
     struct Geometry geometry = {
         .poni_x = poni_x,
@@ -396,12 +405,6 @@ static PyObject* transform(PyObject* self, PyObject* args) {
         return NULL;
     }
     PySys_WriteStdout("Found new locations for pixels.\nOutput images will have shape (%d, %d)\n", new_im_shape.rows, new_im_shape.cols);
-
-    if (!solid_angle_correction) {
-        for (size_t ii = 0; ii < im_size; ii++) {
-            solid_angles[ii] = 1.;
-        }
-    }
 
     struct PixelInfo* pixel_info = (struct PixelInfo*)malloc((im_size) * sizeof(struct PixelInfo));
     if (pixel_info == NULL) {

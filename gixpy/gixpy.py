@@ -45,7 +45,7 @@ class GIXS:
         :param poni_file: Path to the PONI file describing the experimental geometry.
         """
         self.incident_angle = np.radians(float(incident_angle_degrees))
-        self.tilt_angle = np.radians(tilt_angle_degrees)
+        self.tilt_angle = np.radians(float(tilt_angle_degrees))
         if poni_file is None:
             self.ai_original = None
             self.dir = None
@@ -63,7 +63,7 @@ class GIXS:
 
         :param poni_file: Path the to the PONI file.
         """
-        self.ai_original = pyFAI.load(poni_file)
+        self.ai_original = pyFAI.load(str(poni_file))
         try:
             self.dir = poni_file.parent
         except AttributeError:  # If a string is passed instead of a Path object
@@ -92,10 +92,13 @@ class GIXS:
             raise AttributeError("Must load a poni file first using .load(poni_file: Path)")
         if flat_field is None:
             flat_field = np.ones_like(image)
+        critical_angle = np.radians(critical_angle_degrees)
+        if critical_angle > self.incident_angle:
+            critical_angle = 0
         self.data, self.flat_field, new_poni = _gixpy.transform(
             image, flat_field, self.ai_original.pixel1, self.ai_original.pixel2,
             self.ai_original.poni1, self.ai_original.poni2, self.ai_original.dist,
-            self.incident_angle, self.tilt_angle, np.radians(critical_angle_degrees)
+            self.incident_angle, self.tilt_angle, critical_angle
         )
         self.ai = copy.deepcopy(self.ai_original)
         self.ai.poni1 = new_poni[0]

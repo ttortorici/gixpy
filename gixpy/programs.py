@@ -1,6 +1,6 @@
 import fabio.tifimage
 import _gixpy
-import gixpy.poni as poni
+import _gixpy.poni as poni
 import numpy as np
 import argparse
 import fabio

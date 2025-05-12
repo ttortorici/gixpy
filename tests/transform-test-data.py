@@ -1,26 +1,26 @@
 import gixpy
 from time import perf_counter
 from pyFAI import detectors
-from pyFAI import azimuthalIntegrator
+from pyFAI.integrator.azimuthal import AzimuthalIntegrator
 import numpy as np; import fabio
 from pathlib import Path
 import matplotlib.pylab as plt
 from matplotlib.colors import LogNorm
 import matplotlib
 
-directory = Path("test-data")
-file1 = directory / "raw-stitched-data.tif"
-file2 = directory / "flat-field.tif"
+directory = Path(__file__).parent / "test-data"
+file1 = directory / "stitch.edf"
+file2 = directory / "flat-field.edf"
 data = fabio.open(file1).data.astype(np.float64)
 flat = fabio.open(file2).data.astype(np.float64)
 
 pixel = 75e-6
-poni1 = 0.01345
-poni2 = 0.11233821035361662
-det_dist = 0.1569
-incident_angle = np.radians(.19)
-tilt_angle = np.radians(.11)
-critical_angle = 0.
+poni1 = 0.013600000000000001
+poni2 = 0.11215
+det_dist = 0.157160
+incident_angle = np.radians(.17)
+tilt_angle = np.radians(.18)
+critical_angle = np.radians(0.165)
 
 start = perf_counter()
 y = gixpy.transform(data, flat, pixel, pixel, poni1, poni2, det_dist, incident_angle, tilt_angle, critical_angle)
@@ -48,7 +48,7 @@ ax3.set_title("Transformed image with flat field correction")
 ax3.axvline(y[2][1] / pixel - .5, color='r', linewidth=0.5)
 ax3.axhline(y[0].shape[0] - y[2][0]/ pixel + 0.5, color='r', linewidth=.5)
 detector = detectors.Detector(pixel1=pixel, pixel2=pixel, max_shape=y[0].shape, orientation=2)
-ai = azimuthalIntegrator.AzimuthalIntegrator(
+ai = AzimuthalIntegrator(
     det_dist,
     y[2][0],
     y[2][1],

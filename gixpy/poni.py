@@ -124,6 +124,8 @@ class Nudger:
             self.data = data
         else:
             self.data = data / flat_field
+            self.data[np.isinf(self.data)] = 0.
+            self.data[np.isnan(self.data)] = 0.
         self.fig = plt.figure(figsize=IM_SIZE)
         self.ax = None
         self.shape = data.shape
